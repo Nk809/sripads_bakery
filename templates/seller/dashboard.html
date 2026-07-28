@@ -119,8 +119,12 @@
                             <td>₹{{ order.grand_total }}</td>
                             <td><span class="badge bg-light text-dark border">{{ order.get_delivery_type_display }}</span></td>
                             <td>
-                                <span class="badge {% if order.order_status == 'delivered' %}bg-success{% elif order.order_status == 'cancelled' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
-                                    {{ order.get_order_status_display }}
+                                <span class="badge {% if order.order_status == 'delivered' %}bg-success{% elif order.order_status == 'cancelled' %}bg-danger{% elif order.payment_status == 'pending' and order.payments.first.provider == 'Cash' %}bg-warning-subtle text-warning-emphasis border border-warning{% else %}bg-warning text-dark{% endif %}">
+                                    {% if order.payment_status == 'pending' and order.payments.first.provider == 'Cash' %}
+                                        Placed (Unconfirmed Cash)
+                                    {% else %}
+                                        {{ order.get_order_status_display }}
+                                    {% endif %}
                                 </span>
                             </td>
                             <td>{{ order.created_at|date:"M d, H:i" }}</td>
