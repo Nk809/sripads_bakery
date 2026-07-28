@@ -22,3 +22,7 @@ ENV/
 # OS
 .DS_Store
 Thumbs.db
+
+# Vercel and django compiled static
+/staticfiles/
+
