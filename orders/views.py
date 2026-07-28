@@ -59,7 +59,9 @@ def checkout(request):
         name = request.POST.get('name')
         phone = request.POST.get('phone')
         email = request.POST.get('email')
-        address = request.POST.get('address')
+        address = request.POST.get('address', '')
+        if not address:
+            address = "Self Pickup from Sripad's Bakery Outlet"
         delivery_date = request.POST.get('delivery_date')
         delivery_time = request.POST.get('delivery_time')
         delivery_type = request.POST.get('delivery_type')
@@ -125,7 +127,44 @@ def checkout(request):
         cart_items.delete()
         request.session.pop('coupon_code', None)
         
-        # Create notification for order placed
+        payment_method = request.POST.get('payment_method', 'online')
+        
+        if payment_method == 'cash':
+            # Create a pending Cash payment log
+            Payment.objects.create(
+                order=order,
+                transaction_id='CASH-' + uuid.uuid4().hex[:10].upper(),
+                amount=order.advance_amount,
+                status='pending',
+                provider='Cash',
+                is_verified=False
+            )
+            
+            # Send notifications
+            from accounts.models import CustomUser
+            sellers = CustomUser.objects.filter(role='seller')
+            for seller in sellers:
+                Notification.objects.create(
+                    user=seller,
+                    title="New Cash Order (Unconfirmed)",
+                    message=f"Order {order.order_number} has been placed via Cash. Advance payment of ₹{order.advance_amount:.2f} is pending.",
+                    link=f"/orders/seller/manage/"
+                )
+                
+            Notification.objects.create(
+                user=request.user,
+                title="Order Placed (Cash)",
+                message=f"Your order {order.order_number} has been placed via Cash. Sripad's Bakery will review your order and contact you for confirmation.",
+                link=f"/orders/track/{order.order_number}/"
+            )
+            
+            return render(request, 'buyer/payment_success_landing.html', {
+                'order': order,
+                'is_advance': True,
+                'is_cash': True
+            })
+            
+        # Create notification for online order placed
         Notification.objects.create(
             user=request.user,
             title="Order Placed",
@@ -212,9 +251,54 @@ def payment_page(request, order_number):
     return render(request, 'buyer/payment.html', context)
 
 @login_required
+def payment_cash(request, order_number):
+    order = get_object_or_404(Order, order_number=order_number, user=request.user)
+    if order.payment_status != 'pending':
+        return redirect('order_tracking', order_number=order.order_number)
+        
+    if request.method == 'POST':
+        # Create a pending Cash payment if not already existing
+        payment, created = Payment.objects.get_or_create(
+            order=order,
+            provider='Cash',
+            defaults={
+                'transaction_id': 'CASH-' + uuid.uuid4().hex[:10].upper(),
+                'amount': order.advance_amount,
+                'status': 'pending',
+                'is_verified': False
+            }
+        )
+        
+        # Create notifications for bakery owner (broadcast)
+        from accounts.models import CustomUser
+        sellers = CustomUser.objects.filter(role='seller')
+        for seller in sellers:
+            Notification.objects.create(
+                user=seller,
+                title="New Cash Order (Unconfirmed)",
+                message=f"Order {order.order_number} has been placed via Cash. Advance payment of ₹{order.advance_amount:.2f} is pending.",
+                link=f"/orders/seller/manage/"
+            )
+            
+        Notification.objects.create(
+            user=order.user,
+            title="Order Placed (Cash)",
+            message=f"Your order {order.order_number} has been placed via Cash. Sripad's Bakery will review your order and contact you for confirmation.",
+            link=f"/orders/track/{order.order_number}/"
+        )
+        
+        return render(request, 'buyer/payment_success_landing.html', {
+            'order': order,
+            'is_advance': True,
+            'is_cash': True
+        })
+        
+    return redirect('payment_page', order_number=order.order_number)
+
+@login_required
 def payment_remaining_page(request, order_number):
     order = get_object_or_404(Order, order_number=order_number, user=request.user)
-    if order.payment_status != 'advance_paid':
+    if order.payment_status == 'fully_paid' or order.order_status in ['delivered', 'cancelled']:
         return redirect('order_tracking', order_number=order.order_number)
         
     amount = f"{order.remaining_amount:.2f}"
@@ -299,7 +383,10 @@ def payu_success_callback(request, order_number):
                     )
                 else:
                     # Remaining payment
-                    order.payment_status = 'fully_paid'
+                    if order.payment_status == 'advance_paid':
+                        order.payment_status = 'fully_paid'
+                    else:
+                        order.payment_status = 'advance_paid'
                     order.save()
                     
                     Payment.objects.create(
@@ -354,8 +441,8 @@ def payu_failure_callback(request, order_number):
 @csrf_exempt
 def payment_remaining_success(request, order_number):
     order = get_object_or_404(Order, order_number=order_number, user=request.user)
-    if order.payment_status != 'advance_paid':
-        return JsonResponse({'success': False, 'message': 'Order is not in advance paid state.'}, status=400)
+    if order.payment_status == 'fully_paid' or order.order_status in ['delivered', 'cancelled']:
+        return JsonResponse({'success': False, 'message': 'Order is already fully paid or finalized.'}, status=400)
         
     if request.method == 'POST':
         try:
@@ -365,7 +452,10 @@ def payment_remaining_success(request, order_number):
             transaction_id = 'TXN-REM-' + uuid.uuid4().hex[:10].upper()
             
         # Update order status
-        order.payment_status = 'fully_paid'
+        if order.payment_status == 'advance_paid':
+            order.payment_status = 'fully_paid'
+        else:
+            order.payment_status = 'advance_paid'
         order.save()
         
         # Log payment
@@ -625,14 +715,24 @@ def seller_update_order_status(request, order_number):
     # If marked as delivered, complete the full payment
     if new_status == 'delivered':
         order.payment_status = 'fully_paid'
-        # Log remaining 60% payment if it hasn't been logged yet
-        if Payment.objects.filter(order=order, status='success').count() == 1:
+        # Mark any pending cash payments as success and verified
+        pending_payments = Payment.objects.filter(order=order, status='pending')
+        for p in pending_payments:
+            p.status = 'success'
+            p.is_verified = True
+            p.save()
+            
+        # Log remaining payment if not already fully recorded
+        total_recorded_success = sum(p.amount for p in Payment.objects.filter(order=order, status='success'))
+        if total_recorded_success < order.grand_total:
+            remaining_to_log = order.grand_total - total_recorded_success
             Payment.objects.create(
                 order=order,
                 transaction_id='TXN-REM-' + uuid.uuid4().hex[:10].upper(),
-                amount=order.remaining_amount,
+                amount=remaining_to_log,
                 status='success',
-                provider='Cash/Card on Delivery'
+                provider='Cash/Card on Delivery',
+                is_verified=True
             )
             
     order.save()
@@ -726,15 +826,44 @@ def seller_verify_payment(request, payment_id):
         
     payment = get_object_or_404(Payment, id=payment_id)
     payment.is_verified = True
+    payment.status = 'success'
     payment.save()
     
-    # Notify buyer
-    Notification.objects.create(
-        user=payment.order.user,
-        title="Payment Verified",
-        message=f"Your payment of ₹{payment.amount} (ID: {payment.transaction_id}) has been verified as authentic by Sripad's Bakery.",
-        link=f"/orders/track/{payment.order.order_number}/"
-    )
+    order = payment.order
+    # If verifying the advance payment, transition the order statuses
+    if order.payment_status == 'pending':
+        order.payment_status = 'advance_paid'
+        order.order_status = 'payment_received'
+        order.save()
+        Invoice.objects.get_or_create(order=order)
+        
+        # Notify buyer
+        Notification.objects.create(
+            user=order.user,
+            title="Advance Payment Verified",
+            message=f"Your payment of ₹{payment.amount} (ID: {payment.transaction_id}) has been verified. Sripad's Bakery is now preparing your order.",
+            link=f"/orders/track/{order.order_number}/"
+        )
+    # If verifying a remaining payment
+    elif order.payment_status == 'advance_paid' and payment.amount >= order.remaining_amount:
+        order.payment_status = 'fully_paid'
+        order.save()
+        
+        # Notify buyer
+        Notification.objects.create(
+            user=order.user,
+            title="Remaining Payment Verified",
+            message=f"Your remaining payment of ₹{payment.amount} (ID: {payment.transaction_id}) has been verified as authentic.",
+            link=f"/orders/track/{order.order_number}/"
+        )
+    else:
+        # Generic notification
+        Notification.objects.create(
+            user=order.user,
+            title="Payment Verified",
+            message=f"Your payment of ₹{payment.amount} (ID: {payment.transaction_id}) has been verified as authentic by Sripad's Bakery.",
+            link=f"/orders/track/{order.order_number}/"
+        )
     
     return JsonResponse({
         'success': True,

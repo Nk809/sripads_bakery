@@ -5,6 +5,7 @@ from feedback import views as feedback_views
 urlpatterns = [
     path('checkout/', views.checkout, name='checkout'),
     path('payment/<str:order_number>/', views.payment_page, name='payment_page'),
+    path('payment-cash/<str:order_number>/', views.payment_cash, name='payment_cash'),
     path('payment-success/<str:order_number>/', views.payment_success_webhook, name='payment_success'),
     path('payu-success/<str:order_number>/', views.payu_success_callback, name='payu_success_callback'),
     path('payu-failure/<str:order_number>/', views.payu_failure_callback, name='payu_failure_callback'),

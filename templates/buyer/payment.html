@@ -52,6 +52,19 @@
                         <button type="submit" class="btn btn-bakery-primary py-2.5 rounded-pill font-weight-bold shadow-md">
                             <i class="fa-solid fa-lock me-2"></i>Pay ₹{{ order.advance_amount|floatformat:2 }} via PayU
                         </button>
+                    </div>
+                </form>
+
+                <div class="text-center my-3 text-muted">
+                    <span style="font-size: 0.85rem; font-weight: 500;">— OR —</span>
+                </div>
+
+                <form action="{% url 'payment_cash' order.order_number %}" method="POST" id="cashForm">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-outline-success py-2 rounded-pill font-weight-bold shadow-sm">
+                            <i class="fa-solid fa-money-bill-1-wave me-2"></i>Pay via Cash (Order Unconfirmed)
+                        </button>
                         <button type="button" class="btn btn-outline-danger btn-sm rounded-pill mt-2" id="cancelPayBtn">
                             Cancel Payment
                         </button>

@@ -203,3 +203,107 @@ class RemainingPaymentTests(TestCase):
         
         ChatMessage.objects.filter(order=self.order, sender=self.user).update(is_read=True)
         self.assertFalse(self.order.has_unread_messages)
+
+    def test_checkout_with_cash_payment(self):
+        from bakery.models import CartItem, Product, Category
+        category = Category.objects.create(name='Cakes', slug='cakes')
+        product = Product.objects.create(
+            name='Test Cake',
+            slug='test-cake',
+            category=category,
+            price=10.00,
+            stock_quantity=10,
+            availability=True
+        )
+        CartItem.objects.create(
+            user=self.user,
+            product=product,
+            quantity=2,
+            selected_weight='1 kg'
+        )
+        url = reverse('checkout')
+        post_data = {
+            'name': 'Test Buyer',
+            'phone': '1234567890',
+            'email': 'testbuyer@example.com',
+            'delivery_type': 'pickup',
+            'address': 'Self Pickup',
+            'delivery_date': str(datetime.date.today()),
+            'delivery_time': '10:00 AM - 1:00 PM',
+            'payment_method': 'cash'
+        }
+        response = self.client.post(url, data=post_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'buyer/payment_success_landing.html')
+        
+        # Verify order and payment created
+        order = Order.objects.filter(user=self.user, total_amount=20.00).first()
+        self.assertIsNotNone(order)
+        self.assertEqual(order.payment_status, 'pending')
+        self.assertEqual(order.order_status, 'placed')
+        
+        payment = Payment.objects.filter(order=order).first()
+        self.assertIsNotNone(payment)
+        self.assertEqual(payment.provider, 'Cash')
+        self.assertEqual(payment.status, 'pending')
+        self.assertFalse(payment.is_verified)
+
+    def test_payment_cash_page_post(self):
+        self.order.payment_status = 'pending'
+        self.order.save()
+        url = reverse('payment_cash', kwargs={'order_number': self.order.order_number})
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'buyer/payment_success_landing.html')
+        
+        payment = Payment.objects.filter(order=self.order, provider='Cash').first()
+        self.assertIsNotNone(payment)
+        self.assertEqual(payment.status, 'pending')
+        self.assertFalse(payment.is_verified)
+
+    def test_seller_verify_cash_payment(self):
+        seller = User.objects.create_user(
+            username='testseller_cash',
+            email='testseller_cash@example.com',
+            password='password123',
+            role='seller'
+        )
+        self.order.payment_status = 'pending'
+        self.order.save()
+        payment = Payment.objects.create(
+            order=self.order,
+            transaction_id='CASH-MOCK-1',
+            amount=40.00,
+            status='pending',
+            provider='Cash'
+        )
+        
+        self.client.login(username='testseller_cash', password='password123')
+        url = reverse('seller_verify_payment', kwargs={'payment_id': payment.id})
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 200)
+        
+        payment.refresh_from_db()
+        self.assertTrue(payment.is_verified)
+        self.assertEqual(payment.status, 'success')
+        
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.payment_status, 'advance_paid')
+        self.assertEqual(self.order.order_status, 'payment_received')
+
+    def test_payment_remaining_allowed_for_pending_status(self):
+        self.order.payment_status = 'pending'
+        self.order.save()
+        
+        # Should be allowed to access remaining payment page
+        url_page = reverse('payment_remaining_page', kwargs={'order_number': self.order.order_number})
+        response = self.client.get(url_page)
+        self.assertEqual(response.status_code, 200)
+        
+        # Should be allowed to complete remaining payment via API
+        url_success = reverse('payment_remaining_success', kwargs={'order_number': self.order.order_number})
+        response = self.client.post(url_success, data='{"transaction_id": "TXN-TEST-999"}', content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+        
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.payment_status, 'advance_paid')

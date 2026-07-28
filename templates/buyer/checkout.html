@@ -77,7 +77,39 @@
                             placeholder="e.g. Write 'Happy Birthday Amit' on cake, eggless, less cream, chocolate shavings..."></textarea>
                     </div>
 
-                    <button type="submit"
+                    <div class="mb-4 animate-fade-in-up">
+                        <label class="form-label font-weight-bold text-dark">Payment Method</label>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="card p-3 border rounded shadow-sm cursor-pointer payment-option-card active border-warning bg-warning-subtle" id="optionOnlineCard" style="cursor: pointer; transition: all 0.2s;">
+                                    <div class="form-check mb-0">
+                                        <input class="form-check-input" type="radio" name="payment_method" id="payment_online" value="online" checked>
+                                        <label class="form-check-label font-weight-bold text-dark cursor-pointer ms-1" for="payment_online" style="cursor: pointer;">
+                                            <i class="fa-solid fa-credit-card text-warning me-1"></i>Pay Online (PayU)
+                                        </label>
+                                    </div>
+                                    <small class="text-muted d-block mt-2" style="font-size: 0.8rem;">
+                                        Pay 40% advance online via secure PayU gateway to confirm your order immediately.
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card p-3 border rounded shadow-sm cursor-pointer payment-option-card border-secondary-subtle" id="optionCashCard" style="cursor: pointer; transition: all 0.2s;">
+                                    <div class="form-check mb-0">
+                                        <input class="form-check-input" type="radio" name="payment_method" id="payment_cash" value="cash">
+                                        <label class="form-check-label font-weight-bold text-dark cursor-pointer ms-1" for="payment_cash" style="cursor: pointer;">
+                                            <i class="fa-solid fa-money-bill-1-wave text-success me-1"></i>Pay via Cash
+                                        </label>
+                                    </div>
+                                    <small class="text-muted d-block mt-2" style="font-size: 0.8rem;">
+                                        Place order only. Pay cash directly to the bakery. The order will not be confirmed automatically.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn"
                         class="btn btn-bakery-primary w-100 py-2.5 rounded-pill font-weight-bold shadow-md"><i
                             class="fa-solid fa-credit-card me-2"></i>Proceed to Payment</button>
                 </form>
@@ -145,6 +177,48 @@
     document.addEventListener('DOMContentLoaded', function () {
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('delivery_date').min = today;
+
+        // Payment Option Toggle Logic
+        const optionOnline = document.getElementById('payment_online');
+        const optionCash = document.getElementById('payment_cash');
+        const cardOnline = document.getElementById('optionOnlineCard');
+        const cardCash = document.getElementById('optionCashCard');
+        const submitBtn = document.getElementById('submitBtn');
+
+        function updateOptionHighlight() {
+            if (optionOnline.checked) {
+                cardOnline.classList.add('border-warning', 'bg-warning-subtle');
+                cardOnline.classList.remove('border-secondary-subtle');
+                cardCash.classList.remove('border-success', 'bg-success-subtle');
+                cardCash.classList.add('border-secondary-subtle');
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<i class="fa-solid fa-credit-card me-2"></i>Proceed to Payment';
+                }
+            } else {
+                cardOnline.classList.remove('border-warning', 'bg-warning-subtle');
+                cardOnline.classList.add('border-secondary-subtle');
+                cardCash.classList.add('border-success', 'bg-success-subtle');
+                cardCash.classList.remove('border-secondary-subtle');
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<i class="fa-solid fa-check-double me-2"></i>Place Cash Order';
+                }
+            }
+        }
+
+        optionOnline.addEventListener('change', updateOptionHighlight);
+        optionCash.addEventListener('change', updateOptionHighlight);
+        
+        cardOnline.addEventListener('click', function() {
+            optionOnline.checked = true;
+            updateOptionHighlight();
+        });
+        cardCash.addEventListener('click', function() {
+            optionCash.checked = true;
+            updateOptionHighlight();
+        });
+
+        // Initialize highlights
+        updateOptionHighlight();
     });
 
     // Toggle address visibility on pickup selection
