@@ -384,17 +384,29 @@ document.addEventListener('DOMContentLoaded', function () {
         const orderNumber = chatBox.getAttribute('data-order-number');
         const chatForm = document.getElementById('chatSendForm');
         let lastMessageId = 0;
+        const renderedMessageIds = new Set();
+        let isPolling = false;
         
         function scrollChatToBottom() {
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
         function pollChatMessages() {
+            if (isPolling) return;
+            isPolling = true;
+            
             fetch(`/chat/api/messages/${orderNumber}/?last_id=${lastMessageId}`)
             .then(res => res.json())
             .then(data => {
                 if (data.success && data.messages.length > 0) {
+                    let hasNew = false;
                     data.messages.forEach(msg => {
+                        if (renderedMessageIds.has(msg.id)) {
+                            return; // Skip duplicate message
+                        }
+                        renderedMessageIds.add(msg.id);
+                        hasNew = true;
+                        
                         const isMe = msg.is_me;
                         const bubbleHTML = `
                             <div class="d-flex flex-column ${isMe ? 'align-items-end' : 'align-items-start'} mb-3">
@@ -410,10 +422,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         chatBox.insertAdjacentHTML('beforeend', bubbleHTML);
                         lastMessageId = Math.max(lastMessageId, msg.id);
                     });
-                    scrollChatToBottom();
+                    if (hasNew) {
+                        scrollChatToBottom();
+                    }
                 }
             })
-            .catch(err => console.error("Chat polling error:", err));
+            .catch(err => console.error("Chat polling error:", err))
+            .finally(() => {
+                isPolling = false;
+            });
         }
 
         if (chatForm) {
