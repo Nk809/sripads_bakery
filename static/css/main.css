@@ -606,3 +606,111 @@ textarea:focus {
         margin-right: 0 !important;
     }
 }
+
+/* Global Bootstrap Dark Mode Overrides */
+body.dark-mode .form-control,
+body.dark-mode .form-select,
+body.dark-mode textarea {
+    background-color: #2D2D2D !important;
+    color: #FFF8E1 !important;
+    border-color: #5D4037 !important;
+}
+
+body.dark-mode .form-control:focus,
+body.dark-mode .form-select:focus,
+body.dark-mode textarea:focus {
+    background-color: #2D2D2D !important;
+    color: #FFF8E1 !important;
+}
+
+body.dark-mode .form-control::placeholder {
+    color: #FFECB3 !important;
+    opacity: 0.6;
+}
+
+body.dark-mode .dropdown-menu {
+    background-color: #3E2723 !important;
+    border-color: #5D4037 !important;
+}
+
+body.dark-mode .dropdown-item {
+    color: #FFF8E1 !important;
+}
+
+body.dark-mode .dropdown-item:hover,
+body.dark-mode .dropdown-item:focus {
+    background-color: #5D4037 !important;
+    color: #FFF8E1 !important;
+}
+
+body.dark-mode .card {
+    background-color: #3E2723 !important;
+    border-color: #5D4037 !important;
+    color: #FFF8E1 !important;
+}
+
+body.dark-mode .card-header,
+body.dark-mode .card-footer {
+    background-color: #2D2D2D !important;
+    border-color: #5D4037 !important;
+    color: #FFF8E1 !important;
+}
+
+body.dark-mode .table {
+    color: #FFF8E1 !important;
+    border-color: #5D4037 !important;
+}
+
+body.dark-mode .table th,
+body.dark-mode .table td {
+    background-color: #3E2723 !important;
+    color: #FFF8E1 !important;
+    border-color: #5D4037 !important;
+}
+
+body.dark-mode .table-striped tbody tr:nth-of-type(odd) td {
+    background-color: #2D2D2D !important;
+}
+
+body.dark-mode .list-group-item {
+    background-color: #3E2723 !important;
+    color: #FFF8E1 !important;
+    border-color: #5D4037 !important;
+}
+
+body.dark-mode .list-group-item-action:hover,
+body.dark-mode .list-group-item-action:focus {
+    background-color: #5D4037 !important;
+    color: #FFF8E1 !important;
+}
+
+body.dark-mode .modal-content {
+    background-color: #3E2723 !important;
+    color: #FFF8E1 !important;
+    border-color: #5D4037 !important;
+}
+
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer {
+    border-color: #5D4037 !important;
+}
+
+body.dark-mode .text-dark,
+body.dark-mode .text-black,
+body.dark-mode .text-body {
+    color: #FFF8E1 !important;
+}
+
+body.dark-mode .text-muted {
+    color: #FFECB3 !important;
+    opacity: 0.8 !important;
+}
+
+body.dark-mode .bg-light {
+    background-color: #2D2D2D !important;
+}
+
+body.dark-mode .bg-white {
+    background-color: #3E2723 !important;
+}
+

@@ -44,7 +44,13 @@ class Product(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            original_slug = slugify(self.name)
+            slug = original_slug
+            num = 1
+            while Product.objects.filter(slug=slug).exists():
+                slug = f"{original_slug}-{num}"
+                num += 1
+            self.slug = slug
         super().save(*args, **kwargs)
 
     def __str__(self):
