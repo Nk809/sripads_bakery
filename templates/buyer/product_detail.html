@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <!-- Product Detail Layout -->
+    <div class="row g-5">
+        
+        <!-- Images Column (Gallery) -->
+        <div class="col-md-6">
+            <div class="card card-bakery overflow-hidden mb-3">
+                <div class="p-3 bg-white text-center" style="height: 400px;">
+                    {% if product.image %}
+                        <img id="mainProductImage" src="{{ product.image.url }}" class="h-100 w-auto rounded border" style="object-fit: contain; max-width: 100%;">
+                    {% else %}
+                        <i class="fa-solid fa-cake-candles fa-5x text-muted mt-5"></i>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Thumbnails List -->
+            <div class="d-flex gap-2 justify-content-center">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="img-thumbnail img-selector border-warning" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;" onclick="changeMainImage(this.src)">
+                {% endif %}
+                {% if product.image_2 %}
+                    <img src="{{ product.image_2.url }}" class="img-thumbnail img-selector" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;" onclick="changeMainImage(this.src)">
+                {% endif %}
+                {% if product.image_3 %}
+                    <img src="{{ product.image_3.url }}" class="img-thumbnail img-selector" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;" onclick="changeMainImage(this.src)">
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Info Column -->
+        <div class="col-md-6">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="badge bg-warning text-dark font-weight-bold">{{ product.category.name }}</span>
+                {% if product.is_veg %}
+                    <span class="veg-indicator bg-white rounded-1 shadow-sm px-1.5 py-1">
+                        <span class="veg-dot"></span>
+                    </span>
+                    <small class="text-success font-weight-semibold">Vegetarian</small>
+                {% endif %}
+            </div>
+            
+            <h1 class="h2 font-weight-bold text-dark mb-2">{{ product.name }}</h1>
+            <p class="text-muted mb-4">{{ product.description }}</p>
+            
+            <hr class="my-4">
+            
+            <!-- Pricing -->
+            <div class="mb-4">
+                {% if product.discount_price %}
+                    <span class="h2 text-danger font-weight-bold me-2">₹<span id="displayPrice">{{ product.discount_price }}</span> <small class="text-muted font-weight-normal" style="font-size: 0.95rem;">(incl. GST)</small></span>
+                    <span class="h5 text-muted text-decoration-line-through">₹{{ product.price }}</span>
+                {% else %}
+                    <span class="h2 text-dark font-weight-bold">₹<span id="displayPrice">{{ product.price }}</span> <small class="text-muted font-weight-normal" style="font-size: 0.95rem;">(incl. GST)</small></span>
+                {% endif %}
+                <small class="text-muted d-block mt-1">Base Price for 1 kg option</small>
+            </div>
+            
+            <!-- Ingredients -->
+            {% if product.ingredients %}
+                <div class="mb-4">
+                    <h6 class="font-weight-bold text-dark"><i class="fa-solid fa-list-check text-warning me-1"></i>Key Ingredients:</h6>
+                    <p class="text-muted" style="font-size: 0.9rem;">{{ product.ingredients }}</p>
+                </div>
+            {% endif %}
+
+            <!-- Selection Form -->
+            <form class="add-to-cart-form" method="POST" action="{% url 'add_to_cart' %}">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <input type="hidden" id="selectedWeightInput" name="weight" value="{{ product.default_weight }}">
+                
+                <!-- Weight selector buttons -->
+                <div class="mb-4">
+                    <label class="form-label font-weight-bold text-dark">Select Weight</label>
+                    <div class="d-flex gap-2">
+                        {% for weight in weights %}
+                            <button type="button" class="btn btn-outline-warning weight-select-btn rounded-pill font-weight-semibold {% if weight == product.default_weight %}active{% endif %}" data-weight="{{ weight }}">
+                                {{ weight }}
+                            </button>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Quantity & Actions -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label font-weight-bold text-dark">Quantity</label>
+                        <div class="input-group">
+                            <button type="button" class="btn btn-outline-secondary" onclick="changeQty(-1)">-</button>
+                            <input type="number" id="qtyInput" name="quantity" class="form-control text-center font-weight-bold" value="1" min="1" readonly>
+                            <button type="button" class="btn btn-outline-secondary" onclick="changeQty(1)">+</button>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-8 d-flex align-items-end">
+                        <button type="submit" class="btn btn-bakery-primary w-100 py-2.5 rounded-pill"><i class="fa-solid fa-cart-shopping me-2"></i>Add to Cart</button>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="d-flex gap-3">
+                <!-- Chat with Seller link -->
+                {% if user.is_authenticated %}
+                    {% if user.orders.first %}
+                        <a href="{% url 'chat_room' order_number=user.orders.first.order_number %}" class="btn btn-outline-secondary btn-sm rounded-pill"><i class="fa-solid fa-comments text-warning me-1"></i>Chat with Seller</a>
+                    {% else %}
+                        <button class="btn btn-outline-secondary btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#chatNoOrderModal"><i class="fa-solid fa-comments text-warning me-1"></i>Chat with Seller</button>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-secondary btn-sm rounded-pill"><i class="fa-solid fa-comments text-warning me-1"></i>Login to Chat</a>
+                {% endif %}
+                <small class="text-muted ms-auto d-flex align-items-center"><i class="fa-regular fa-clock text-warning me-1"></i>Delivers in: {{ product.delivery_time }}</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="my-5 border-top pt-5">
+        <h3 class="font-weight-bold mb-4">Recommended for You</h3>
+        <div class="row g-4">
+            {% for rec in recommended %}
+                <div class="col-lg-3 col-md-6">
+                    {% include 'buyer/product_card.html' with product=rec %}
+                </div>
+            {% empty %}
+                <p class="text-muted">No related recommendations.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="my-5 border-top pt-5">
+        <h3 class="font-weight-bold mb-4">Product Reviews</h3>
+        <div class="d-flex flex-column gap-3">
+            {% for r in reviews %}
+                <div class="card p-3 shadow-sm">
+                    <div class="d-flex justify-content-between mb-2">
+                        <h6 class="font-weight-bold mb-0">{{ r.user.username }}</h6>
+                        <div>
+                            {% for i in "12345" %}
+                                <i class="fas fa-star {% if forloop.counter <= r.rating %}text-warning{% else %}text-muted{% endif %}"></i>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p class="text-muted mb-0">{{ r.review }}</p>
+                    {% if r.photo %}
+                        <img src="{{ r.photo.url }}" class="img-thumbnail mt-2" style="max-height: 120px; max-width: 120px; object-fit: cover;">
+                    {% endif %}
+                    {% if r.reply %}
+                        <div class="bg-light p-3 rounded mt-2 border-start border-warning" style="border-width: 4px !important;">
+                            <h6 class="font-weight-bold text-warning mb-1"><i class="fa-solid fa-reply me-1"></i>Bakery Reply:</h6>
+                            <p class="mb-0 text-muted" style="font-size: 0.85rem;">{{ r.reply }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p class="text-muted">No reviews for this product yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Chat with Seller when no Order exists -->
+<div class="modal fade" id="chatNoOrderModal" tabindex="-1" aria-labelledby="chatNoOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title font-weight-bold" id="chatNoOrderModalLabel"><i class="fa-solid fa-comments text-warning me-2"></i>Start Conversation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>To chat with Sripad's Bakery, please place an order first! Our live chat system links directly to orders to let you discuss design modifications, custom flavors, or delivery timings seamlessly.</p>
+                <p class="text-muted" style="font-size: 0.85rem;">If you have a special request, please add this product to your cart and provide details under the <strong>Special Instructions</strong> box at checkout.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Large Image gallery helper
+    function changeMainImage(src) {
+        document.getElementById('mainProductImage').src = src;
+        const thumbs = document.querySelectorAll('.img-selector');
+        thumbs.forEach(t => t.classList.remove('border-warning'));
+        event.target.classList.add('border-warning');
+    }
+
+    // Handle Quantity increments
+    function changeQty(amt) {
+        const input = document.getElementById('qtyInput');
+        let current = parseInt(input.value);
+        current += amt;
+        if (current >= 1) {
+            input.value = current;
+        }
+    }
+
+    // Weight selection updates display price
+    const basePrice = parseFloat("{{ product.current_price }}");
+    const weightButtons = document.querySelectorAll('.weight-select-btn');
+    
+    weightButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            weightButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const selectedWeight = btn.getAttribute('data-weight');
+            document.getElementById('selectedWeightInput').value = selectedWeight;
+            
+            // Adjust price multiplier
+            let multiplier = 1.0;
+            const w = selectedWeight.toLowerCase();
+            if (w.includes('0.5') || w.includes('half')) {
+                multiplier = 0.5;
+            } else if (w.includes('2')) {
+                multiplier = 2.0;
+            } else if (w.includes('3')) {
+                multiplier = 3.0;
+            } else if (w.includes('5')) {
+                multiplier = 5.0;
+            }
+            
+            const newPrice = basePrice * multiplier;
+            document.getElementById('displayPrice').textContent = newPrice.toFixed(2);
+        });
+    });
+</script>
+{% endblock %}

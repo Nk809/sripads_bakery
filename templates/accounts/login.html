@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Login - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card card-bakery p-4 shadow-md animate-fade-in-up">
+                <div class="text-center mb-4">
+                    <i class="fa-solid fa-cookie-bite fa-3x text-warning mb-2"></i>
+                    <h2 class="h3 font-weight-bold">Welcome Back!</h2>
+                    <p class="text-muted">Sign in to order freshly baked treats</p>
+                </div>
+                
+                <form method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username" class="form-label font-weight-bold">Username or Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-user"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0" id="username" name="username" placeholder="Enter username or email" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between">
+                            <label for="password" class="form-label font-weight-bold">Password</label>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control border-start-0 ps-0" id="password" name="password" placeholder="Enter password" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-bakery-primary w-100 py-2.5 rounded-pill mb-3">Sign In</button>
+                    
+                    <div class="text-center">
+                        <span class="text-muted">Don't have an account? </span>
+                        <a href="{% url 'signup' %}" class="font-weight-bold text-warning">Create Account</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

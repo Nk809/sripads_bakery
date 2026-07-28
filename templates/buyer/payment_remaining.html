@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Remaining Payment - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card card-bakery p-4 shadow-md border-top border-warning" style="border-width: 5px !important;">
+                <div class="text-center mb-4 border-bottom pb-3">
+                    <i class="fa-solid fa-shield-halved fa-3x text-success mb-2"></i>
+                    <h2 class="h4 font-weight-bold text-dark mb-1">PayU Secured Payment</h2>
+                    <p class="text-muted" style="font-size: 0.85rem;">Sripad's Bakery Order Final Checkout Gateway</p>
+                </div>
+                
+                <div class="alert alert-light border p-3 mb-4 shadow-sm">
+                    <div class="d-flex justify-content-between text-muted mb-2">
+                        <span>Order Number:</span>
+                        <strong class="text-dark">{{ order.order_number }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between text-muted mb-2">
+                        <span>Grand Total:</span>
+                        <span class="text-dark font-weight-semibold">₹{{ order.grand_total|floatformat:2 }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-muted mb-2">
+                        <span>Advance Paid (40%):</span>
+                        <span class="text-success font-weight-semibold">₹{{ order.advance_amount|floatformat:2 }}</span>
+                    </div>
+                    <hr class="my-2">
+                    <div class="d-flex justify-content-between text-dark h5 mb-0 font-weight-bold">
+                        <span>Remaining Balance:</span>
+                        <span class="text-warning-emphasis">₹{{ order.remaining_amount|floatformat:2 }}</span>
+                    </div>
+                </div>
+
+                <div class="p-3 border rounded bg-white text-center shadow-inner mb-4">
+                    <h6 class="font-weight-bold mb-2"><i class="fa-solid fa-circle-info me-2 text-warning"></i>Payment Information</h6>
+                    <p class="text-muted mb-0" style="font-size: 0.85rem;">
+                        You are paying the remaining 60% balance for your order. You will be redirected to the secure PayU gateway.
+                    </p>
+                </div>
+
+                <form action="{{ payu_url }}" method="POST" id="payuForm">
+                    <!-- Hidden inputs required by PayU -->
+                    <input type="hidden" name="key" value="{{ payu_merchant_key }}" />
+                    <input type="hidden" name="txnid" value="{{ txnid }}" />
+                    <input type="hidden" name="amount" value="{{ amount }}" />
+                    <input type="hidden" name="productinfo" value="{{ productinfo }}" />
+                    <input type="hidden" name="firstname" value="{{ firstname }}" />
+                    <input type="hidden" name="email" value="{{ email }}" />
+                    <input type="hidden" name="phone" value="{{ phone }}" />
+                    <input type="hidden" name="surl" value="{{ surl }}" />
+                    <input type="hidden" name="furl" value="{{ furl }}" />
+                    <input type="hidden" name="hash" value="{{ payu_hash }}" />
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-bakery-primary py-2.5 rounded-pill font-weight-bold shadow-md">
+                            <i class="fa-solid fa-lock me-2"></i>Pay ₹{{ order.remaining_amount|floatformat:2 }} via PayU
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill mt-2" id="cancelPayBtn">
+                            Cancel Payment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cancelBtn = document.getElementById('cancelPayBtn');
+        cancelBtn.addEventListener('click', function() {
+            if (confirm("Are you sure you want to cancel the payment process?")) {
+                window.location.href = "{% url 'order_tracking' order_number=order.order_number %}";
+            }
+        });
+    });
+</script>
+{% endblock %}

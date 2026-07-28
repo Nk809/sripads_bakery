@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Coupon - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card card-bakery p-4 shadow-sm">
+                <h3 class="font-weight-bold text-dark mb-4 border-bottom pb-2"><i class="fa-solid fa-tag text-warning me-2"></i>{{ action }} Coupon Code</h3>
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="code" class="form-label font-weight-bold">Coupon Code</label>
+                            <input type="text" class="form-control text-uppercase" id="code" name="code" value="{{ coupon.code|default:'' }}" placeholder="e.g. FESTIVAL50" {% if action == 'Edit' %}readonly{% endif %} required>
+                            <small class="text-muted">Unique code customers type in during checkout.</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="coupon_type" class="form-label font-weight-bold">Offer Type</label>
+                            <select class="form-select" id="coupon_type" name="coupon_type" onchange="toggleDiscountField()" required>
+                                <option value="percentage" {% if coupon.coupon_type == 'percentage' %}selected{% endif %}>Discount Percentage</option>
+                                <option value="bogo" {% if coupon.coupon_type == 'bogo' %}selected{% endif %}>Buy One Get One (BOGO)</option>
+                                <option value="festival" {% if coupon.coupon_type == 'festival' %}selected{% endif %}>Festival Offer (% Discount)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6" id="discountFormGroup">
+                            <label for="discount_percentage" class="form-label font-weight-bold">Discount Percentage (%)</label>
+                            <input type="number" class="form-control" id="discount_percentage" name="discount_percentage" value="{{ coupon.discount_percentage|default:0 }}" min="1" max="100">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label font-weight-bold d-block">Status</label>
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" id="active" name="active" {% if action == 'Add' or coupon.active %}checked{% endif %}>
+                                <label class="form-check-label font-weight-semibold text-muted" for="active">Active & Redeemable</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="valid_from" class="form-label font-weight-bold">Valid From</label>
+                            <input type="datetime-local" class="form-control" id="valid_from" name="valid_from" value="{{ valid_from_str }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="valid_to" class="form-label font-weight-bold">Expiry Date & Time (Valid To)</label>
+                            <input type="datetime-local" class="form-control" id="valid_to" name="valid_to" value="{{ valid_to_str }}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="form-label font-weight-bold">Description / Offer Details</label>
+                        <input type="text" class="form-control" id="description" name="description" value="{{ coupon.description|default:'' }}" placeholder="e.g. Get BOGO on all cakes for New Year, 10% discount on cart subtotal...">
+                    </div>
+
+                    <div class="d-flex gap-3 justify-content-end">
+                        <a href="{% url 'seller_coupon_list' %}" class="btn btn-bakery-secondary px-4 rounded-pill">Cancel</a>
+                        <button type="submit" class="btn btn-bakery-primary px-5 rounded-pill font-weight-bold shadow-md">{{ action }} Coupon</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleDiscountField() {
+        const type = document.getElementById('coupon_type').value;
+        const discountGroup = document.getElementById('discountFormGroup');
+        const discountInput = document.getElementById('discount_percentage');
+        
+        if (type === 'bogo') {
+            discountGroup.style.display = 'none';
+            discountInput.required = false;
+            discountInput.value = '0';
+        } else {
+            discountGroup.style.display = 'block';
+            discountInput.required = true;
+            if (discountInput.value === '0') {
+                discountInput.value = '10';
+            }
+        }
+    }
+    
+    // Run on load
+    document.addEventListener('DOMContentLoaded', toggleDiscountField);
+</script>
+{% endblock %}

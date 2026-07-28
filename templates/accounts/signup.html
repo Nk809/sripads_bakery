@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card card-bakery p-4 shadow-md animate-fade-in-up">
+                <div class="text-center mb-4">
+                    <i class="fa-solid fa-cake-candles fa-3x text-warning mb-2"></i>
+                    <h2 class="h3 font-weight-bold">Create Account</h2>
+                    <p class="text-muted">Join Sripad's Bakery to get exclusive offers and track orders</p>
+                </div>
+                
+                <form method="POST" action="{% url 'signup' %}">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="username" class="form-label font-weight-bold">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="e.g. sripad123" required>
+                        </div>
+                        <div class="col">
+                            <label for="phone" class="form-label font-weight-bold">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="e.g. +91 9876543210" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label font-weight-bold">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="e.g. customer@example.com" required>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col">
+                            <label for="password" class="form-label font-weight-bold">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Min 6 characters" required>
+                        </div>
+                        <div class="col">
+                            <label for="confirm_password" class="form-label font-weight-bold">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Repeat password" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-bakery-primary w-100 py-2.5 rounded-pill mb-3">Sign Up</button>
+                    
+                    <div class="text-center">
+                        <span class="text-muted">Already have an account? </span>
+                        <a href="{% url 'login' %}" class="font-weight-bold text-warning">Sign In</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

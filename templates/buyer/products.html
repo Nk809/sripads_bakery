@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Browse Bakery Items - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <!-- Header Banner -->
+    <div class="bg-warning-subtle rounded-4 p-4 p-md-5 mb-5 shadow-sm text-center">
+        <h1 class="h2 font-weight-bold text-dark mb-2">Our Delicious Catalog</h1>
+        <p class="text-muted mb-0">Browse through our menu, select weight, customize, and order instantly.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Sidebar Filter Panel -->
+        <div class="col-lg-3">
+            <div class="card card-bakery p-4 shadow-sm">
+                <h5 class="font-weight-bold mb-3 border-bottom pb-2">Filter Catalog</h5>
+                
+                <!-- Category Filter -->
+                <div class="mb-4">
+                    <label class="form-label font-weight-bold text-muted">Categories</label>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="{% url 'product_list' %}{% if query %}?q={{ query }}{% endif %}" class="btn btn-sm {% if not selected_category %}btn-warning text-dark{% else %}btn-light{% endif %} text-start font-weight-semibold">All Items</a>
+                        {% for cat in categories %}
+                            <a href="{% url 'product_list' %}?category={{ cat.slug }}{% if query %}&q={{ query }}{% endif %}" class="btn btn-sm {% if selected_category == cat.slug %}btn-warning text-dark{% else %}btn-light{% endif %} text-start font-weight-semibold">
+                                {{ cat.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Reset Filters Button -->
+                <a href="{% url 'product_list' %}" class="btn btn-outline-danger btn-sm w-100 rounded-pill"><i class="fa-solid fa-rotate-left me-1"></i>Reset All Filters</a>
+            </div>
+        </div>
+
+        <!-- Products Grid Panel -->
+        <div class="col-lg-9">
+            <!-- Summary bar -->
+            <div class="d-flex justify-content-between align-items-center mb-4 bg-white border rounded p-3 shadow-sm">
+                <p class="mb-0 text-muted">Showing <strong>{{ products.count }}</strong> delicious items found</p>
+                {% if query %}
+                    <p class="mb-0">Search query: <span class="badge bg-warning text-dark">{{ query }}</span></p>
+                {% endif %}
+            </div>
+
+            <!-- Grid -->
+            <div class="row g-4">
+                {% for prod in products %}
+                    <div class="col-md-4 col-sm-6">
+                        {% include 'buyer/product_card.html' with product=prod %}
+                    </div>
+                {% empty %}
+                    <div class="col-12 text-center py-5">
+                        <i class="fa-regular fa-face-frown fa-3x text-muted mb-3"></i>
+                        <h4 class="font-weight-bold text-dark">No products found</h4>
+                        <p class="text-muted">Try searching with other terms or check back later.</p>
+                        <a href="{% url 'product_list' %}" class="btn btn-bakery-primary rounded-pill">View All Items</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

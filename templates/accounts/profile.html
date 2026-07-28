@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}My Profile - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card card-bakery p-4 shadow-md">
+                <h2 class="h3 font-weight-bold mb-4"><i class="fa-solid fa-user-gear text-warning me-2"></i>My Profile Settings</h2>
+                
+                <form method="POST" action="{% url 'profile' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row align-items-center mb-4">
+                        <div class="col-md-3 text-center">
+                            <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}" class="rounded-circle border border-warning shadow-sm mx-auto d-block" style="width: 100px; height: 100px; object-fit: cover;">
+                        </div>
+                        
+                        <div class="col-md-9 mt-3 mt-md-0">
+                            <label for="profile_picture" class="form-label font-weight-bold">Change Profile Picture</label>
+                            <input class="form-control" type="file" id="profile_picture" name="profile_picture" accept="image/*">
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="first_name" class="form-label font-weight-bold">First Name</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name|default:'' }}" placeholder="Enter first name">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="last_name" class="form-label font-weight-bold">Last Name</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name|default:'' }}" placeholder="Enter last name">
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="email" class="form-label font-weight-bold">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label font-weight-bold">Phone Number</label>
+                            <input type="text" class="form-control" id="phone" name="phone" value="{{ user.phone|default:'' }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="address" class="form-label font-weight-bold">Default Delivery Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="3" placeholder="Enter your default home/work delivery address">{{ user.address|default:'' }}</textarea>
+                        <small class="text-muted">This address will be automatically pre-filled on your checkout forms.</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-bakery-primary px-4 rounded-pill">Save Profile Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Bakery Settings - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card card-bakery p-4 shadow-sm">
+                <h3 class="font-weight-bold text-dark mb-4 border-bottom pb-2"><i class="fa-solid fa-gears text-warning me-2"></i>Global Bakery Configuration</h3>
+                
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="delivery_charge" class="form-label font-weight-bold">Standard Delivery Charge (₹)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            <input type="number" step="0.01" class="form-control" id="delivery_charge" name="delivery_charge" value="{{ settings.delivery_charge }}" placeholder="e.g. 50.00" required>
+                        </div>
+                        <small class="text-muted mt-1 d-block">Flat fee added to home delivery orders.</small>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="free_delivery_threshold" class="form-label font-weight-bold">Free Delivery Threshold (₹)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            <input type="number" step="0.01" class="form-control" id="free_delivery_threshold" name="free_delivery_threshold" value="{{ settings.free_delivery_threshold }}" placeholder="e.g. 500.00" required>
+                        </div>
+                        <small class="text-muted mt-1 d-block">Orders with totals equal to or greater than this amount receive free delivery charges.</small>
+                    </div>
+                    
+                    <div class="d-flex gap-3 justify-content-end">
+                        <a href="{% url 'seller_dashboard' %}" class="btn btn-bakery-secondary px-4 rounded-pill">Back to Dashboard</a>
+                        <button type="submit" class="btn btn-bakery-primary px-5 rounded-pill font-weight-bold shadow-md">Save Settings</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

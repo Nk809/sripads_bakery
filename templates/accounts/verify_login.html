@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Verify Admin Login - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card card-bakery p-4 shadow-md animate-fade-in-up">
+                <div class="text-center mb-4">
+                    <i class="fa-solid fa-envelope-circle-check fa-3x text-warning mb-2 animate-bounce"></i>
+                    <h2 class="h3 font-weight-bold">Gmail Verification</h2>
+                    <p class="text-muted">A 6-digit verification code has been sent to your registered email: <strong class="text-dark">{{ email }}</strong></p>
+                </div>
+                
+                <form method="POST" action="{% url 'verify_login' %}">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="verification_code" class="form-label font-weight-bold">Enter Verification Code</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-key"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0 text-center font-weight-bold letter-spacing-lg" id="verification_code" name="verification_code" placeholder="123456" pattern="[0-9]{6}" maxlength="6" style="font-size: 1.25rem;" required>
+                        </div>
+                        <small class="form-text text-muted">Please check your inbox or spam folder for the code.</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-bakery-primary w-100 py-2.5 rounded-pill mb-3">Verify & Login</button>
+                    
+                    <div class="text-center">
+                        <span class="text-muted">Didn't receive the code? </span>
+                        <a href="{% url 'verify_login' %}?resend=1" class="font-weight-bold text-warning">Resend Code</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

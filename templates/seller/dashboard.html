@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% block title %}Seller Admin Dashboard - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <div>
+            <h1 class="h3 font-weight-bold text-dark mb-0">Seller Dashboard</h1>
+            <span class="text-muted">Manage Sripad's Bakery sales, analytics and production catalogs</span>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'seller_coupon_list' %}" class="btn btn-outline-warning rounded-pill"><i class="fa-solid fa-tags me-1"></i>Offers & Coupons</a>
+            <a href="{% url 'seller_product_list' %}" class="btn btn-outline-warning rounded-pill"><i class="fa-solid fa-cookie-bite me-1"></i>Products Editor</a>
+            <a href="{% url 'seller_orders' %}" class="btn btn-warning text-dark font-weight-bold rounded-pill"><i class="fa-solid fa-receipt me-1"></i>Order Desk</a>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards Row -->
+    <div class="row g-3 mb-5">
+        <div class="col-xl-3 col-sm-6">
+            <a href="{% url 'seller_orders' %}?status=all" class="text-decoration-none">
+                <div class="card p-3 shadow-sm border-0 bg-white card-stats" style="border-left: 4px solid var(--accent-color) !important; transition: transform 0.2s, box-shadow 0.2s;">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted d-block" style="font-size: 0.85rem;">Today's Orders</span>
+                            <h4 class="font-weight-bold text-dark mb-0 mt-1">{{ today_orders }}</h4>
+                        </div>
+                        <i class="fa-solid fa-calendar-day fa-2x text-warning"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+            <a href="{% url 'seller_orders' %}?status=pending" class="text-decoration-none">
+                <div class="card p-3 shadow-sm border-0 bg-white card-stats" style="border-left: 4px solid #17a2b8 !important; transition: transform 0.2s, box-shadow 0.2s;">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted d-block" style="font-size: 0.85rem;">Pending Prep</span>
+                            <h4 class="font-weight-bold text-dark mb-0 mt-1">{{ pending_orders }}</h4>
+                        </div>
+                        <i class="fa-solid fa-hourglass-half fa-2x text-info"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+            <a href="{% url 'seller_orders' %}?status=completed" class="text-decoration-none">
+                <div class="card p-3 shadow-sm border-0 bg-white card-stats" style="border-left: 4px solid #28a745 !important; transition: transform 0.2s, box-shadow 0.2s;">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted d-block" style="font-size: 0.85rem;">Lifetime Revenue</span>
+                            <h4 class="font-weight-bold text-dark mb-0 mt-1">₹{{ revenue|floatformat:2 }}</h4>
+                        </div>
+                        <i class="fa-solid fa-indian-rupee-sign fa-2x text-success"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+            <a href="{% url 'seller_customers' %}" class="text-decoration-none">
+                <div class="card p-3 shadow-sm border-0 bg-white card-stats" style="border-left: 4px solid #6f42c1 !important; transition: transform 0.2s, box-shadow 0.2s;">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted d-block" style="font-size: 0.85rem;">Registered Customers</span>
+                            <h4 class="font-weight-bold text-dark mb-0 mt-1">{{ customers_count }}</h4>
+                        </div>
+                        <i class="fa-solid fa-users fa-2x text-purple" style="color: #6f42c1;"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Charts Panel -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8">
+            <div class="card card-bakery p-4 shadow-sm h-100">
+                <h5 class="font-weight-bold text-dark mb-4 border-bottom pb-2">Sales Revenue Over Time</h5>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card card-bakery p-4 shadow-sm h-100">
+                <h5 class="font-weight-bold text-dark mb-4 border-bottom pb-2">Top Selling Cakes</h5>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="productsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders & Alerts Table -->
+    <div class="card card-bakery p-4 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="font-weight-bold text-dark mb-0">Recent Order Logs</h5>
+            <a href="{% url 'seller_orders' %}" class="btn btn-warning btn-sm text-dark font-weight-bold">View Order Desk</a>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Total Amount</th>
+                        <th>Type</th>
+                        <th>Order Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in recent_orders %}
+                        <tr>
+                            <td><strong>{{ order.order_number }}</strong></td>
+                            <td>{{ order.name }}</td>
+                            <td>₹{{ order.grand_total }}</td>
+                            <td><span class="badge bg-light text-dark border">{{ order.get_delivery_type_display }}</span></td>
+                            <td>
+                                <span class="badge {% if order.order_status == 'delivered' %}bg-success{% elif order.order_status == 'cancelled' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                                    {{ order.get_order_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ order.created_at|date:"M d, H:i" }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'order_tracking' order_number=order.order_number %}" class="btn btn-outline-secondary" title="Details"><i class="fa-solid fa-eye"></i></a>
+                                    <a href="{% url 'chat_room' order_number=order.order_number %}" class="btn btn-outline-secondary" title="Chat"><i class="fa-solid fa-comments"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">No recent orders logged.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Load Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Parse Django Context Strings safely
+        const chartDates = JSON.parse('{{ chart_dates|safe }}');
+        const chartRevenue = JSON.parse('{{ chart_revenue|safe }}');
+        const productLabels = JSON.parse('{{ top_products_labels|safe }}');
+        const productQty = JSON.parse('{{ top_products_qty|safe }}');
+
+        // Sales Revenue Line Chart
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+        new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: chartDates,
+                datasets: [{
+                    label: 'Revenue (₹)',
+                    data: chartRevenue,
+                    borderColor: '#FF6F00',
+                    backgroundColor: 'rgba(255, 111, 0, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Top Products Pie Chart
+        const prodCtx = document.getElementById('productsChart').getContext('2d');
+        new Chart(prodCtx, {
+            type: 'doughnut',
+            data: {
+                labels: productLabels.length > 0 ? productLabels : ['None'],
+                datasets: [{
+                    data: productQty.length > 0 ? productQty : [1],
+                    backgroundColor: [
+                        '#3E2723', '#FF6F00', '#FFB300', '#5D4037', '#E65100'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

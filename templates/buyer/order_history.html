@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Order History - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <h1 class="h3 font-weight-bold mb-4"><i class="fa-solid fa-clock-rotate-left text-warning me-2"></i>My Order History</h1>
+    
+    {% if orders %}
+        <div class="row g-4">
+            {% for order in orders %}
+                <div class="col-12">
+                    <div class="card card-bakery p-3 shadow-sm" style="border-left: 5px solid {% if order.order_status == 'delivered' %}#28a745{% elif order.order_status == 'cancelled' %}#dc3545{% else %}#ffc107{% endif %} !important;">
+                        <div class="row align-items-center g-3">
+                            <div class="col-md-3">
+                                <h6 class="font-weight-bold text-dark mb-1">{{ order.order_number }}</h6>
+                                <span class="text-muted d-block" style="font-size: 0.8rem;">Placed: {{ order.created_at|date:"M d, Y" }}</span>
+                            </div>
+                            <div class="col-md-3">
+                                <span class="text-muted d-block" style="font-size: 0.8rem;">Items:</span>
+                                <span class="font-weight-semibold" style="font-size: 0.9rem;">
+                                    {% for item in order.items.all %}
+                                        {{ item.quantity }} x {{ item.product.name }}{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                </span>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="text-muted d-block" style="font-size: 0.8rem;">Grand Total:</span>
+                                <span class="font-weight-bold text-dark">₹{{ order.grand_total }}</span>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="badge {% if order.order_status == 'delivered' %}bg-success{% elif order.order_status == 'cancelled' %}bg-danger{% else %}bg-warning text-dark{% endif %} p-2">
+                                    {{ order.get_order_status_display }}
+                                </span>
+                                <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Pay: {{ order.get_payment_status_display }}</small>
+                            </div>
+                            <div class="col-md-2 text-md-end d-flex flex-md-column gap-2 justify-content-end">
+                                <a href="{% url 'order_tracking' order_number=order.order_number %}" class="btn btn-warning btn-sm text-dark font-weight-bold rounded-pill">Track Status</a>
+                                {% if order.payment_status == 'advance_paid' and order.order_status != 'cancelled' %}
+                                    <a href="{% url 'payment_remaining_page' order_number=order.order_number %}" class="btn btn-success btn-sm font-weight-bold rounded-pill">Pay Balance</a>
+                                {% endif %}
+                                <div class="btn-group">
+                                    <a href="{% url 'reorder' order_number=order.order_number %}" class="btn btn-outline-warning btn-sm">Reorder</a>
+                                    
+                                    {% if order.order_status == 'placed' or order.order_status == 'payment_received' %}
+                                        <button class="btn btn-outline-danger btn-sm" onclick="cancelOrder('{{ order.order_number }}')">Cancel</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card card-bakery p-5 shadow-sm text-center">
+            <i class="fa-solid fa-receipt fa-4x text-muted mb-3"></i>
+            <h4 class="font-weight-bold text-dark">No orders found</h4>
+            <p class="text-muted">You haven't placed any orders yet. Visit our shop and get something delicious!</p>
+            <a href="{% url 'product_list' %}" class="btn btn-bakery-primary rounded-pill mt-2">Go to Catalog</a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    function cancelOrder(orderNum) {
+        if (!confirm("Are you sure you want to cancel this order?")) return;
+        const reason = prompt("Please enter the reason for cancellation:");
+        if (reason === null) return; // Cancelled prompt
+        
+        const formData = new FormData();
+        formData.append('reason', reason || 'Buyer requested cancellation');
+        
+        fetch(`/orders/cancel/${orderNum}/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            if (data.success) {
+                location.reload();
+            }
+        });
+    }
+    
+    function getCookie(name) {
+        let value = "; " + document.cookie;
+        let parts = value.split("; " + name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
+    }
+</script>
+{% endblock %}

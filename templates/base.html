@@ -1,0 +1,252 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sripad's Bakery - Pure Vegetarian Maha Prasadam{% endblock %}</title>
+
+    <!-- Meta Tags for SEO -->
+    <meta name="description"
+        content="Sripad's Bakery serves pure vegetarian, sanctified custom cakes, pastries, breads, and cookies offered to the Lord (Maha Prasadam). Order online, track delivery, and chat in real-time.">
+    <meta name="author" content="Sripad's Bakery">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- Navigation Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-bakery">
+        <div class="container">
+            <a class="navbar-brand navbar-brand-bakery d-flex align-items-center" href="{% url 'home' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Bakery Logo" class="me-2 rounded-circle border border-warning-subtle" style="height: 38px; width: 38px; object-fit: contain;">
+                Sripad's <span>Bakery</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#bakeryNavbar"
+                aria-controls="bakeryNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="bakeryNavbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-bakery" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-bakery" href="{% url 'product_list' %}">Browse Items</a>
+                    </li>
+                </ul>
+
+                <!-- Search Bar -->
+                <form class="d-flex me-3" action="{% url 'product_list' %}" method="GET">
+                    <div class="input-group">
+                        <input class="form-control border-0 bg-light text-dark rounded-start" type="search"
+                            placeholder="Search cakes, breads..." aria-label="Search" name="q"
+                            value="{{ query|default:'' }}">
+                        <button class="btn btn-warning border-0" type="submit"><i class="fas fa-search"></i></button>
+                    </div>
+                </form>
+
+                <ul class="navbar-nav align-items-center">
+                    <!-- Dark Mode Toggle -->
+                    <li class="nav-item me-2">
+                        <button class="btn btn-outline-warning rounded-circle" id="darkModeToggle"
+                            aria-label="Toggle Dark Mode" style="width: 40px; height: 40px; padding: 0;">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+
+                    {% if user.is_authenticated %}
+                    {% if not user.is_seller %}
+                    <!-- Cart -->
+                    <li class="nav-item me-2">
+                        <a class="nav-link nav-link-bakery position-relative" href="{% url 'cart_detail' %}"
+                            aria-label="Shopping Cart">
+                            <i class="fa-solid fa-cart-shopping fa-lg"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark cart-count-badge d-none"
+                                id="cartCountBadge">0</span>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <!-- Notifications Dropdown -->
+                    <li class="nav-item dropdown me-3">
+                        <a class="nav-link nav-link-bakery position-relative dropdown-toggle" href="#"
+                            id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                            aria-label="Notifications">
+                            <i class="fa-solid fa-bell fa-lg"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
+                                id="notificationCount">0</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg py-0"
+                            aria-labelledby="notificationDropdown" id="notificationList"
+                            style="width: 300px; max-height: 400px; overflow-y: auto;">
+                            <li class="px-3 py-2 text-center text-muted">Loading notifications...</li>
+                        </ul>
+                    </li>
+
+                    <!-- Profile Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle nav-link-bakery d-flex align-items-center" href="#"
+                            id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}" class="rounded-circle me-2 border border-warning"
+                                style="width: 32px; height: 32px; object-fit: cover;">
+                            {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}"><i
+                                        class="fa-solid fa-user-gear me-2"></i>My Profile</a></li>
+                            {% if user.is_seller %}
+                            <li><a class="dropdown-item text-primary font-weight-bold"
+                                    href="{% url 'seller_orders' %}"><i class="fa-solid fa-receipt me-2"></i>Production
+                                    Order Desk</a></li>
+                            {% else %}
+                            <li><a class="dropdown-item" href="{% url 'order_history' %}"><i
+                                        class="fa-solid fa-receipt me-2"></i>Order History</a></li>
+                            {% endif %}
+
+                            {% if user.is_seller %}
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-primary font-weight-bold"
+                                    href="{% url 'seller_dashboard' %}"><i
+                                        class="fa-solid fa-chart-line me-2"></i>Seller Panel</a></li>
+                            <li><a class="dropdown-item text-warning font-weight-bold"
+                                    href="{% url 'seller_coupon_list' %}"><i class="fa-solid fa-tags me-2"></i>Offers &
+                                    Coupons</a></li>
+                            <li><a class="dropdown-item text-secondary font-weight-bold"
+                                    href="{% url 'seller_settings' %}"><i class="fa-solid fa-gears me-2"></i>Bakery
+                                    Settings</a></li>
+                            {% endif %}
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i
+                                        class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-bakery" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-warning rounded-pill px-3 py-1 font-weight-bold ms-2"
+                            href="{% url 'signup' %}">Sign Up</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Alert Messaging System -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+            {% if message.tags == 'success' %}<i class="fa-solid fa-circle-check me-2"></i>
+            {% elif message.tags == 'error' %}<i class="fa-solid fa-circle-xmark me-2"></i>
+            {% else %}<i class="fa-solid fa-circle-info me-2"></i>{% endif %}
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content Area -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-bakery mt-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="footer-title"><i class="fa-solid fa-cake-candles me-2"></i>Sripad's Bakery</h5>
+                    <p>Pure Vegetarian & Sanctified Maha Prasadam. We deliver premium quality bakery items,
+                        custom cakes, and snacks offered to the Lord and prepared with love and devotion.</p>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="#" class="btn btn-outline-warning btn-sm rounded-circle" aria-label="Facebook"><i
+                                class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="btn btn-outline-warning btn-sm rounded-circle" aria-label="Instagram"><i
+                                class="fab fa-instagram"></i></a>
+                        <a href="#" class="btn btn-outline-warning btn-sm rounded-circle" aria-label="Twitter"><i
+                                class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 footer-links">
+                    <h5 class="footer-title">Quick Links</h5>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'product_list' %}">Browse Items</a></li>
+                        <li><a href="{% url 'cart_detail' %}">Shopping Cart</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="footer-title">Hours of Operations</h5>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li>Monday - Friday: 8:00 AM - 10:00 PM</li>
+                        <li>Saturday - Sunday: 9:00 AM - 11:00 PM</li>
+                        <li>Online Delivery: 24/7 Service</li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="footer-title">Contact Us</h5>
+                    <p><i class="fa-solid fa-location-dot me-2 text-warning"></i>Iskcon Burla, Near Siphon ,
+                        Burla,Sambalpur,Odisha, India</p>
+                    <p><i class="fa-solid fa-phone me-2 text-warning"></i>+91 98765 43210</p>
+                    <p><i class="fa-solid fa-envelope me-2 text-warning"></i>contact@sripadsbakery.com</p>
+                </div>
+            </div>
+            <hr class="mt-5">
+            <div class="text-center py-2" style="font-size: 0.8rem;">
+                &copy; 2026 Sripad's Bakery. All Rights Reserved. Designed with <i
+                    class="fa-solid fa-heart text-danger"></i> for delicious experiences.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Interactive JS Engine -->
+    <script src="{% static 'js/main.js' %}"></script>
+
+    <!-- Inline cart script for loading default cart counts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            {% if user.is_authenticated and not user.is_seller %}
+            // Initial cart fetch to sync cart badge
+            fetch('/api/cart/')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.cart_items && data.cart_items.length > 0) {
+                        const countBadge = document.getElementById('cartCountBadge');
+                        if (countBadge) {
+                            countBadge.textContent = data.cart_items.length;
+                            countBadge.classList.remove('d-none');
+                        }
+                    }
+                });
+            {% endif %}
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

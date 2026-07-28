@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Manage Feedback - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <div>
+            <h1 class="h3 font-weight-bold text-dark mb-0">Customer Reviews & Feedback</h1>
+            <span class="text-muted">Read customer reviews and publish response replies</span>
+        </div>
+    </div>
+
+    <!-- Reviews Grid -->
+    <div class="row g-4">
+        {% for r in feedbacks %}
+            <div class="col-md-6" id="feedback-card-{{ r.id }}">
+                <div class="card card-bakery p-4 shadow-sm h-100 d-flex flex-column border-top border-warning" style="border-width: 4px !important;">
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <div>
+                            <h6 class="font-weight-bold text-dark mb-0">{{ r.user.username }}</h6>
+                            <small class="text-muted">Order: <strong>{{ r.order.order_number }}</strong> • {{ r.created_at|date:"M d, Y" }}</small>
+                        </div>
+                        <div>
+                            {% for i in "12345" %}
+                                <i class="fas fa-star {% if forloop.counter <= r.rating %}text-warning{% else %}text-muted{% endif %}"></i>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <p class="text-muted my-3 flex-grow-1" style="font-size: 0.9rem;">"{{ r.review }}"</p>
+                    
+                    {% if r.photo %}
+                        <div class="mb-3">
+                            <img src="{{ r.photo.url }}" class="img-thumbnail" style="max-height: 100px; cursor: pointer;" onclick="window.open('{{ r.photo.url }}')">
+                        </div>
+                    {% endif %}
+
+                    <!-- Reply section -->
+                    <div class="border-top pt-3 mt-3">
+                        {% if r.reply %}
+                            <div class="p-3 bg-light rounded border-start border-warning" style="border-width: 4px !important;">
+                                <h6 class="font-weight-bold text-warning mb-1" style="font-size: 0.85rem;"><i class="fa-solid fa-reply me-1"></i>Your Published Reply:</h6>
+                                <p class="mb-0 text-muted" style="font-size: 0.85rem;">{{ r.reply }}</p>
+                            </div>
+                        {% else %}
+                            <form class="reply-form" data-id="{{ r.id }}">
+                                {% csrf_token %}
+                                <label for="reply-{{ r.id }}" class="form-label font-weight-semibold text-muted" style="font-size: 0.8rem;">Write a response reply:</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" id="reply-{{ r.id }}" name="reply" class="form-control" placeholder="e.g. Thank you for the positive feedback, we look forward to baking for you again!" required>
+                                    <button class="btn btn-warning text-dark font-weight-bold" type="submit">Submit</button>
+                                </div>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center py-5 card card-bakery shadow-sm text-muted">
+                <i class="fa-regular fa-star fa-3x mb-3 text-warning"></i>
+                <h5 class="font-weight-bold text-dark">No feedback logged yet</h5>
+                <p>Reviews will appear here after orders are delivered and customers submit ratings.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const replyForms = document.querySelectorAll('.reply-form');
+        
+        replyForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const fid = form.getAttribute('data-id');
+                const formData = new FormData(form);
+                
+                fetch(`/feedback/reply/${fid}/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.success) {
+                        location.reload();
+                    }
+                });
+            });
+        });
+        
+        function getCookie(name) {
+            let value = "; " + document.cookie;
+            let parts = value.split("; " + name + "=");
+            if (parts.length == 2) return parts.pop().split(";").shift();
+        }
+    });
+</script>
+{% endblock %}

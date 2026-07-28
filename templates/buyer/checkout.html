@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% block title %}Checkout - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <h1 class="h3 font-weight-bold mb-4"><i class="fa-solid fa-truck-fast text-warning me-2"></i>Checkout Details</h1>
+
+    <div class="row g-4">
+
+        <!-- Form Panel -->
+        <div class="col-lg-7">
+            <div class="card card-bakery p-4 shadow-sm">
+                <h5 class="font-weight-bold text-dark mb-4 border-bottom pb-2">Customer & Delivery Info</h5>
+
+                <form method="POST" action="{% url 'checkout' %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label font-weight-bold">Full Name</label>
+                        <input type="text" class="form-control" id="name" name="name"
+                            value="{{ user.first_name }} {{ user.last_name }}" placeholder="Enter full name" required>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="phone" class="form-label font-weight-bold">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone"
+                                value="{{ user.phone|default:'' }}" placeholder="e.g. +91 9876543210" required>
+                        </div>
+                        <div class="col">
+                            <label for="email" class="form-label font-weight-bold">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="delivery_type" class="form-label font-weight-bold">Delivery Option</label>
+                        <select class="form-select" id="delivery_type" name="delivery_type"
+                            onchange="toggleAddressField()">
+                            <option value="delivery" selected>Home Delivery ( Delivery charges are based on distance and
+                                will update automatically.)</option>
+                            <option value="pickup">Self Pickup from Bakery (Free)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="addressFormGroup">
+                        <label for="address" class="form-label font-weight-bold">Delivery Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="3"
+                            placeholder="Enter complete address with landmark"
+                            required>{{ user.address|default:'' }}</textarea>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="delivery_date" class="form-label font-weight-bold">Preferred Delivery
+                                Date</label>
+                            <input type="date" class="form-control" id="delivery_date" name="delivery_date" required>
+                        </div>
+                        <div class="col">
+                            <label for="delivery_time" class="form-label font-weight-bold">Preferred Delivery Time
+                                Slot</label>
+                            <select class="form-select" id="delivery_time" name="delivery_time" required>
+                                <option value="" disabled selected>Select slot</option>
+                                <option value="10:00 AM - 1:00 PM">Morning Slot (10 AM - 1 PM)</option>
+                                <option value="1:00 PM - 4:00 PM">Afternoon Slot (1 PM - 4 PM)</option>
+                                <option value="4:00 PM - 7:00 PM">Evening Slot (4 PM - 7 PM)</option>
+                                <option value="7:00 PM - 10:00 PM">Late Night Slot (7 PM - 10 PM)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="special_instructions" class="form-label font-weight-bold">Special Instructions /
+                            Customizations</label>
+                        <textarea class="form-control" id="special_instructions" name="special_instructions" rows="3"
+                            placeholder="e.g. Write 'Happy Birthday Amit' on cake, eggless, less cream, chocolate shavings..."></textarea>
+                    </div>
+
+                    <button type="submit"
+                        class="btn btn-bakery-primary w-100 py-2.5 rounded-pill font-weight-bold shadow-md"><i
+                            class="fa-solid fa-credit-card me-2"></i>Proceed to Payment</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Summary Panel -->
+        <div class="col-lg-5">
+            <div class="card card-bakery p-4 shadow-sm" style="background-color: var(--secondary-light);">
+                <h5 class="font-weight-bold text-dark mb-3 border-bottom pb-2">Checkout Summary</h5>
+
+                <div class="d-flex flex-column gap-2 mb-4">
+                    {% for item in cart_items %}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0 text-dark font-weight-semibold">{{ item.product.name }}</h6>
+                            <small class="text-muted">{{ item.quantity }} x {{ item.selected_weight }}</small>
+                        </div>
+                        <span class="font-weight-bold">₹{{ item.item_total|floatformat:2 }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <hr class="my-3">
+
+                <ul class="list-unstyled d-flex flex-column gap-2 mb-4" style="font-size: 0.9rem;">
+                    <li class="d-flex justify-content-between text-muted">
+                        <span>Items Subtotal (incl. GST)</span>
+                        <span>₹{{ total|floatformat:2 }}</span>
+                    </li>
+                    {% if discount > 0 %}
+                    <li class="d-flex justify-content-between text-danger">
+                        <span>Coupon Discount</span>
+                        <span>-₹{{ discount|floatformat:2 }}</span>
+                    </li>
+                    {% endif %}
+                    <li class="d-flex justify-content-between text-muted">
+                        <span>5% GST (Included)</span>
+                        <span>₹{{ gst|floatformat:2 }}</span>
+                    </li>
+                    <li class="d-flex justify-content-between text-muted">
+                        <span>Delivery Charges</span>
+                        <span class="text-warning-emphasis font-weight-bold" id="checkoutDeliveryCharges">TBD by
+                            Bakery</span>
+                    </li>
+                    <hr class="my-2">
+                    <li class="d-flex justify-content-between text-dark font-weight-bold h5">
+                        <span>Grand Total</span>
+                        <span>₹{{ grand_total|floatformat:2 }}</span>
+                    </li>
+                </ul>
+
+                <div class="card bg-white p-3 border rounded shadow-sm text-center">
+                    <span class="text-muted d-block" style="font-size: 0.85rem;">Advance Payment to Pay Now (40%)</span>
+                    <span class="h4 text-success font-weight-bold d-block my-1">₹{{ advance_amount|floatformat:2 }}</span>
+                    <small class="text-muted" style="font-size: 0.75rem;">Remaining balance of ₹{{ remaining_amount|floatformat:2 }} (+ custom delivery charges decided by bakery) is payable at delivery.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set date input min value to today
+    document.addEventListener('DOMContentLoaded', function () {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('delivery_date').min = today;
+    });
+
+    // Toggle address visibility on pickup selection
+    function toggleAddressField() {
+        const type = document.getElementById('delivery_type').value;
+        const group = document.getElementById('addressFormGroup');
+        const text = document.getElementById('address');
+        const deliveryLabel = document.getElementById('checkoutDeliveryCharges');
+
+        if (type === 'pickup') {
+            group.style.display = 'none';
+            text.value = 'Self Pickup from Sripad\'s Bakery Outlet';
+            text.required = false;
+            if (deliveryLabel) {
+                deliveryLabel.textContent = '₹0.00 (Free)';
+            }
+        } else {
+            group.style.display = 'block';
+            text.value = '';
+            text.required = true;
+            if (deliveryLabel) {
+                deliveryLabel.textContent = 'TBD by Bakery';
+            }
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% block title %}Shopping Cart - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <h1 class="h3 font-weight-bold mb-4"><i class="fa-solid fa-cart-flatbed-suitcases text-warning me-2"></i>My Shopping Cart</h1>
+
+    {% if cart_items %}
+        <div class="row g-4">
+            
+            <!-- Cart Items List Table -->
+            <div class="col-lg-8">
+                <div class="card card-bakery p-3 shadow-sm mb-4">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Weight</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart_items %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if item.product.image %}
+                                                    <img src="{{ item.product.image.url }}" class="rounded me-3 border" style="width: 60px; height: 60px; object-fit: cover;">
+                                                {% endif %}
+                                                <div>
+                                                    <h6 class="font-weight-bold text-dark mb-0">{{ item.product.name }}</h6>
+                                                    <small class="text-muted">{{ item.product.category.name }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark border">{{ item.selected_weight }}</span></td>
+                                        <td>₹{{ item.product.current_price }}</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-secondary" onclick="updateCartQty({{ item.id }}, 'decrease')">-</button>
+                                                <span class="btn border-secondary-subtle px-3 fw-bold" style="cursor: default;">{{ item.quantity }}</span>
+                                                <button class="btn btn-outline-secondary" onclick="updateCartQty({{ item.id }}, 'increase')">+</button>
+                                            </div>
+                                        </td>
+                                        <td class="font-weight-bold text-dark">₹{{ item.item_total|floatformat:2 }}</td>
+                                        <td>
+                                            <button class="btn btn-link text-danger p-0 border-0" onclick="removeFromCart({{ item.id }})" aria-label="Remove Item">
+                                                <i class="fa-solid fa-trash-can fa-lg"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Coupon Box -->
+                <div class="card card-bakery p-4 shadow-sm">
+                    <h6 class="font-weight-bold mb-2">Apply Discount Coupon</h6>
+                    <form id="couponForm" class="d-flex gap-2">
+                        <input type="text" id="couponCodeInput" class="form-control" placeholder="Enter coupon code" value="{{ coupon_code|default:'' }}" {% if coupon_code %}disabled{% endif %}>
+                        {% if coupon_code %}
+                            <button type="button" class="btn btn-danger px-4 rounded-pill" id="removeCouponBtn">Remove</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-warning px-4 rounded-pill" id="applyCouponBtn">Apply</button>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+
+            <!-- Receipt Breakdown Sidebar -->
+            <div class="col-lg-4">
+                <div class="card card-bakery p-4 shadow-sm border border-warning" style="background-color: var(--secondary-light);">
+                    <h5 class="font-weight-bold text-dark border-bottom pb-2 mb-3">Order Receipt</h5>
+                    
+                    <ul class="list-unstyled d-flex flex-column gap-2 mb-4" style="font-size: 0.95rem;">
+                        <li class="d-flex justify-content-between text-muted">
+                            <span>Cart Subtotal (incl. GST)</span>
+                            <span>₹{{ total|floatformat:2 }}</span>
+                        </li>
+                        
+                        {% if discount > 0 %}
+                            <li class="d-flex justify-content-between text-danger">
+                                <span>Coupon Discount</span>
+                                <span>-₹{{ discount|floatformat:2 }}</span>
+                            </li>
+                        {% endif %}
+                        
+                        <li class="d-flex justify-content-between text-muted">
+                            <span>5% GST (Included)</span>
+                            <span>₹{{ gst|floatformat:2 }}</span>
+                        </li>
+                        <li class="d-flex justify-content-between text-muted">
+                            <span>Delivery Charges</span>
+                            <span class="text-warning-emphasis font-weight-bold">TBD by Bakery</span>
+                        </li>
+                        <hr class="my-2">
+                        <li class="d-flex justify-content-between text-dark font-weight-bold h5">
+                            <span>Grand Total</span>
+                            <span>₹{{ grand_total|floatformat:2 }}</span>
+                        </li>
+                    </ul>
+
+                    <!-- Payment split alert -->
+                    <div class="alert alert-warning border border-warning-subtle shadow-sm mb-4">
+                        <h6 class="font-weight-bold text-warning mb-1"><i class="fa-solid fa-receipt me-1"></i>Advance Split Policy:</h6>
+                        <p class="mb-0 text-muted" style="font-size: 0.8rem;">To confirm your bakery order, pay a **40% advance payment** now. Pay the remaining **60% balance + custom delivery charge** (determined by the bakery based on your location) on delivery.</p>
+                        
+                        <div class="d-flex justify-content-between mt-3 font-weight-bold text-success border-top border-warning-subtle pt-2" style="font-size: 0.9rem;">
+                            <span>Advance to Pay (40%)</span>
+                            <span>₹{{ advance_amount|floatformat:2 }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-muted mt-1" style="font-size: 0.8rem;">
+                            <span>Balance Due (60%)</span>
+                            <span>₹{{ remaining_amount|floatformat:2 }}</span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <a href="{% url 'checkout' %}" class="btn btn-bakery-primary py-2.5 rounded-pill shadow-md"><i class="fa-solid fa-circle-chevron-right me-2"></i>Proceed to Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="card card-bakery p-5 shadow-sm text-center">
+            <i class="fa-solid fa-cart-shopping fa-4x text-muted mb-3"></i>
+            <h4 class="font-weight-bold text-dark">Your cart is empty</h4>
+            <p class="text-muted">Explore Sripad's Bakery catalog to add cakes, breads, or snacks to your cart!</p>
+            <a href="{% url 'product_list' %}" class="btn btn-bakery-primary rounded-pill px-4 py-2 mt-2">Browse Catalog</a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- JS for Cart Coupons -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const couponForm = document.getElementById('couponForm');
+        const applyBtn = document.getElementById('applyCouponBtn');
+        const removeBtn = document.getElementById('removeCouponBtn');
+        const input = document.getElementById('couponCodeInput');
+        
+        if (couponForm) {
+            couponForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const code = input.value.trim();
+                if (!code) return;
+                
+                const formData = new FormData();
+                formData.append('code', code);
+                
+                fetch('/cart/apply-coupon/', {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.success) {
+                        location.reload();
+                    }
+                });
+            });
+        }
+        
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+                fetch('/cart/remove-coupon/', {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': getCookie('csrftoken') }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.success) {
+                        location.reload();
+                    }
+                });
+            });
+        }
+        
+        function getCookie(name) {
+            let value = "; " + document.cookie;
+            let parts = value.split("; " + name + "=");
+            if (parts.length == 2) return parts.pop().split(";").shift();
+        }
+    });
+</script>
+{% endblock %}

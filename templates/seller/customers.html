@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}Manage Customers - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <div>
+            <h1 class="h3 font-weight-bold text-dark mb-0">Customer Accounts Registry</h1>
+            <span class="text-muted">Analyze buyer segments, track loyalty purchases, and inspect lifetime values</span>
+        </div>
+    </div>
+
+    <!-- Customers Table -->
+    <div class="card card-bakery p-3 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Customer Profiles</th>
+                        <th>Email Address</th>
+                        <th>Phone Number</th>
+                        <th>Joined Date</th>
+                        <th class="text-center">Total Orders Placed</th>
+                        <th class="text-end">Lifetime Spend</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customers %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if customer.profile_picture %}
+                                        <img src="{{ customer.profile_picture.url }}" class="rounded-circle me-3 border" style="width: 40px; height: 40px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3 border" style="width: 40px; height: 40px;">
+                                            <i class="fa-solid fa-user text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div>
+                                        <strong class="text-dark d-block">
+                                            {{ customer.first_name|default:'' }} {{ customer.last_name|default:'' }}
+                                        </strong>
+                                        <small class="text-muted">Username: {{ customer.username }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ customer.email }}</td>
+                            <td>{{ customer.phone|default:'Not Provided' }}</td>
+                            <td>{{ customer.created_at|date:"M d, Y" }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-warning-subtle text-warning-emphasis font-weight-bold px-3 py-1.5 rounded-pill">
+                                    {{ customer.order_count }} orders
+                                </span>
+                            </td>
+                            <td class="text-end font-weight-bold text-dark">
+                                ₹{{ customer.total_spend|default:0.0|floatformat:2 }}
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-outline-danger btn-sm rounded-pill px-3 py-1 delete-customer-btn" data-customerid="{{ customer.id }}" data-username="{{ customer.username }}">
+                                    <i class="fa-solid fa-trash me-1"></i>Delete
+                                </button>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">No buyers registered in the database yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteBtns = document.querySelectorAll('.delete-customer-btn');
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const customerId = btn.getAttribute('data-customerid');
+                const username = btn.getAttribute('data-username');
+                
+                if (!confirm(`Are you sure you want to permanently delete the customer account "${username}"? This will also cancel or delete all associated orders and data.`)) {
+                    return;
+                }
+                
+                fetch(`/seller/customers/delete/${customerId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.success) {
+                        location.reload();
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("An error occurred while deleting the customer account.");
+                });
+            });
+        });
+        
+        function getCookie(name) {
+            let value = "; " + document.cookie;
+            let parts = value.split("; " + name + "=");
+            if (parts.length == 2) return parts.pop().split(";").shift();
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,374 @@
+/* Sripad's Bakery - Luxury Design Tokens */
+:root {
+    --primary-color: #4A2C2A;       /* Dark Chocolate */
+    --primary-hover: #361E1C;
+    --secondary-color: #E78A4E;     /* Warm Honey Gold */
+    --secondary-hover: #D07339;
+    --bg-cream: #FFF8F3;            /* Soft Cream */
+    --bg-white: #FFFFFF;
+    --text-dark: #2D1C1B;           /* Dark Brown Charcoal */
+    --text-muted: #8E7A78;
+    --border-color: #F1E5DC;
+    --shadow-sm: 0 2px 4px rgba(74, 44, 42, 0.05);
+    --shadow-md: 0 10px 20px rgba(74, 44, 42, 0.08);
+    --shadow-lg: 0 15px 35px rgba(74, 44, 42, 0.12);
+    --font-poppins: 'Poppins', sans-serif;
+    --border-radius-sm: 8px;
+    --border-radius-md: 16px;
+    --border-radius-lg: 24px;
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    font-family: var(--font-poppins);
+    background-color: var(--bg-cream);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-cream);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+/* Premium Navbar */
+.navbar-custom {
+    background-color: var(--primary-color);
+    padding: 15px 0;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition-smooth);
+}
+.navbar-custom .navbar-brand {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--bg-cream);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.navbar-custom .navbar-brand span {
+    color: var(--secondary-color);
+}
+.navbar-custom .nav-link {
+    color: var(--bg-cream);
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition-smooth);
+}
+.navbar-custom .nav-link:hover, 
+.navbar-custom .nav-link.active {
+    color: var(--secondary-color);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Luxury Cards */
+.bakery-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-smooth);
+    position: relative;
+}
+.bakery-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+.bakery-card-img-wrapper {
+    position: relative;
+    overflow: hidden;
+    height: 220px;
+}
+.bakery-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition-smooth);
+}
+.bakery-card:hover .bakery-card-img {
+    transform: scale(1.1);
+}
+.veg-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #2e7d32;
+    border: 1px solid #2e7d32;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 2;
+}
+.veg-dot {
+    width: 8px;
+    height: 8px;
+    background: #2e7d32;
+    border-radius: 50%;
+}
+.nonveg-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #c62828;
+    border: 1px solid #c62828;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 2;
+}
+.nonveg-dot {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 8px solid #c62828;
+}
+.fav-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: var(--transition-smooth);
+    z-index: 2;
+}
+.fav-btn:hover, .fav-btn.active {
+    color: #e53935;
+    background: #fff;
+    transform: scale(1.1);
+}
+
+/* Buttons */
+.btn-primary-custom {
+    background-color: var(--primary-color);
+    color: var(--bg-cream);
+    border: none;
+    padding: 10px 24px;
+    font-weight: 600;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition-smooth);
+}
+.btn-primary-custom:hover {
+    background-color: var(--primary-hover);
+    color: var(--bg-white);
+}
+.btn-secondary-custom {
+    background-color: var(--secondary-color);
+    color: var(--bg-white);
+    border: none;
+    padding: 10px 24px;
+    font-weight: 600;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition-smooth);
+}
+.btn-secondary-custom:hover {
+    background-color: var(--secondary-hover);
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(rgba(45, 28, 27, 0.75), rgba(45, 28, 27, 0.75)), url('https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=1920') no-repeat center center/cover;
+    padding: 120px 0;
+    color: var(--bg-cream);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.hero-title {
+    font-size: 56px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    animation: fadeInDown 1s ease;
+}
+.hero-tagline {
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 40px;
+    opacity: 0.9;
+}
+
+/* Category Circle Cards */
+.category-circle-card {
+    text-align: center;
+    transition: var(--transition-smooth);
+    margin-bottom: 20px;
+}
+.category-circle-img-wrapper {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    overflow: hidden;
+    border: 3px solid var(--secondary-color);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-smooth);
+}
+.category-circle-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition-smooth);
+}
+.category-circle-card:hover .category-circle-img-wrapper img {
+    transform: scale(1.1);
+}
+.category-circle-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Live Order Tracking Timeline */
+.timeline-tracking {
+    position: relative;
+    padding: 20px 0;
+}
+.timeline-item {
+    position: relative;
+    padding-left: 45px;
+    margin-bottom: 30px;
+}
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 17px;
+    top: 30px;
+    bottom: -30px;
+    width: 2px;
+    background-color: var(--border-color);
+}
+.timeline-item:last-child::before {
+    display: none;
+}
+.timeline-badge {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 16px;
+    z-index: 2;
+    transition: var(--transition-smooth);
+}
+.timeline-item.active .timeline-badge {
+    background-color: #2e7d32;
+    color: white;
+    box-shadow: 0 0 10px rgba(46, 125, 50, 0.4);
+}
+.timeline-item.pending .timeline-badge {
+    background-color: #fbc02d;
+    color: white;
+    box-shadow: 0 0 10px rgba(251, 192, 45, 0.4);
+}
+.timeline-content {
+    background: var(--bg-white);
+    padding: 15px 20px;
+    border-radius: var(--border-radius-sm);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+/* Live Chat Styling */
+.chat-container {
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-white);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+.chat-header {
+    background-color: var(--primary-color);
+    color: var(--bg-cream);
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: var(--bg-cream);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.chat-bubble {
+    max-width: 70%;
+    padding: 12px 18px;
+    border-radius: var(--border-radius-md);
+    font-size: 14px;
+    line-height: 1.5;
+    position: relative;
+    word-break: break-word;
+}
+.chat-bubble.me {
+    align-self: flex-end;
+    background-color: var(--primary-color);
+    color: var(--bg-cream);
+    border-bottom-right-radius: 4px;
+}
+.chat-bubble.other {
+    align-self: flex-start;
+    background-color: var(--bg-white);
+    color: var(--text-dark);
+    border-bottom-left-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+.chat-img {
+    max-width: 100%;
+    border-radius: var(--border-radius-sm);
+    margin-top: 5px;
+}
+.chat-input-area {
+    padding: 15px;
+    background-color: var(--bg-white);
+    border-top: 1px solid var(--border-color);
+}
+
+/* Animations */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
