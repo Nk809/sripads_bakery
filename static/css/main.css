@@ -582,3 +582,27 @@ textarea:focus {
         margin-bottom: 2rem !important;
     }
 }
+
+/* Mobile Navbar Quick-Action Dropdown Position & Spacing fixes */
+@media (max-width: 991.98px) {
+    .navbar-bakery .dropdown-menu {
+        position: absolute !important;
+        float: none !important;
+        top: 100% !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: calc(100vw - 32px) !important;
+        max-width: 320px !important;
+        margin-top: 12px !important;
+        border: 1px solid var(--border-color) !important;
+        background-color: var(--card-bg) !important;
+        box-shadow: var(--shadow-lg) !important;
+        z-index: 1050 !important;
+    }
+    
+    /* Spacing between Search Bar and Quick Actions on mobile */
+    .navbar-bakery form.d-flex {
+        margin-bottom: 15px !important;
+        margin-right: 0 !important;
+    }
+}
