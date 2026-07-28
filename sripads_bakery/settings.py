@@ -66,7 +66,7 @@ if os.environ.get('DATABASE_URL'):
 elif os.environ.get('VERCEL') == '1':
     # Fallback directly to Supabase database if running on Vercel
     DATABASES = {
-        'default': dj_database_url.parse("postgresql://postgres:Tunu9348608677%40@db.yjkxaywybkndxxlppmhp.supabase.co:5432/postgres")
+        'default': dj_database_url.parse("postgresql://postgres.yjkxaywybkndxxlppmhp:Tunu9348608677%40@aws-1-ap-south-1.pooler.supabase.com:6543/postgres")
     }
 elif os.environ.get('USE_POSTGRES', 'False').lower() in ('true', '1', 't'):
     DATABASES = {
