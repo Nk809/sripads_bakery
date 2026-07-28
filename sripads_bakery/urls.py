@@ -14,13 +14,13 @@ urlpatterns = [
     path('', include('bakery.urls')), # Core bakery routes (Homepage, Product list, cart)
 ]
 
-from django.views.static import serve
+from bakery.views import serve_db_media
 from django.urls import re_path
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-# Always serve media files from MEDIA_ROOT (required for Vercel /tmp/media fallback)
+# Serve media files from the database or fall back to local disk
 urlpatterns += [
-    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^media/(?P<path>.*)$', serve_db_media),
 ]

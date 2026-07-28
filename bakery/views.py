@@ -539,3 +539,23 @@ def seller_coupon_delete(request, pk):
     coupon.delete()
     messages.success(request, f"Coupon code '{code}' deleted successfully.")
     return redirect('seller_coupon_list')
+
+from django.http import HttpResponse, Http404
+from django.views.static import serve as django_serve
+import os
+
+def serve_db_media(request, path):
+    clean_path = path.lstrip('/')
+    try:
+        obj = UploadedFile.objects.get(name=clean_path)
+        response = HttpResponse(obj.content, content_type=obj.content_type)
+        response['Content-Length'] = len(obj.content)
+        response['Cache-Control'] = 'public, max-age=86400'
+        return response
+    except UploadedFile.DoesNotExist:
+        from django.conf import settings
+        local_path = os.path.join(settings.MEDIA_ROOT, clean_path)
+        if os.path.exists(local_path):
+            return django_serve(request, clean_path, document_root=settings.MEDIA_ROOT)
+        raise Http404("File not found")
+
