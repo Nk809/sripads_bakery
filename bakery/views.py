@@ -10,10 +10,10 @@ from feedback.models import Feedback
 
 def home(request):
     categories = Category.objects.all()[:6]
-    featured_products = Product.objects.filter(is_featured=True, availability=True)[:4]
-    best_sellers = Product.objects.filter(is_best_seller=True, availability=True)[:4]
-    today_specials = Product.objects.filter(is_today_special=True, availability=True)[:4]
-    new_arrivals = Product.objects.filter(is_new_arrival=True, availability=True).order_by('-created_at')[:4]
+    featured_products = Product.objects.select_related('category').filter(is_featured=True, availability=True)[:4]
+    best_sellers = Product.objects.select_related('category').filter(is_best_seller=True, availability=True)[:4]
+    today_specials = Product.objects.select_related('category').filter(is_today_special=True, availability=True)[:4]
+    new_arrivals = Product.objects.select_related('category').filter(is_new_arrival=True, availability=True).order_by('-created_at')[:4]
     
     # Get recent customer reviews (feedbacks with high rating)
     reviews = Feedback.objects.filter(rating__gte=4).order_by('-created_at')[:5]
@@ -32,7 +32,7 @@ def product_list(request):
     query = request.GET.get('q', '')
     category_slug = request.GET.get('category', '')
     
-    products = Product.objects.filter(availability=True)
+    products = Product.objects.select_related('category').filter(availability=True)
     
     if query:
         products = products.filter(name__icontains=query) | products.filter(description__icontains=query)
@@ -52,8 +52,8 @@ def product_list(request):
     return render(request, 'buyer/products.html', context)
 
 def product_detail(request, slug):
-    product = get_object_or_404(Product, slug=slug)
-    recommended = Product.objects.filter(category=product.category, availability=True).exclude(id=product.id)[:4]
+    product = get_object_or_404(Product.objects.select_related('category'), slug=slug)
+    recommended = Product.objects.select_related('category').filter(category=product.category, availability=True).exclude(id=product.id)[:4]
     
     # Fetch reviews for this product
     reviews = Feedback.objects.filter(order_item__product=product).order_by('-created_at')
@@ -68,6 +68,7 @@ def product_detail(request, slug):
         'weights': weights,
     }
     return render(request, 'buyer/product_detail.html', context)
+
 
 @login_required
 def cart_detail(request):
