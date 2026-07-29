@@ -31,7 +31,7 @@
                     <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-2"
                         style="width: 80px; height: 80px; overflow: hidden;">
                         {% if cat.image %}
-                        <img src="{{ cat.image.url }}" class="w-100 h-100" style="object-fit: cover;">
+                        <img src="{{ cat.image.url }}?v=3" class="w-100 h-100" style="object-fit: cover;">
                         {% else %}
                         <i class="fa-solid fa-cookie fa-2x text-warning"></i>
                         {% endif %}
