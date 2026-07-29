@@ -5,7 +5,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-sripads-bakery-secret-key-for-development'
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 't') if os.environ.get('VERCEL') != '1' else False
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
