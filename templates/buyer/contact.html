@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Contact Us - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <!-- Header Page title -->
+    <div class="text-center mb-5">
+        <h1 class="font-weight-bold text-dark mb-2"><i class="fa-solid fa-phone-volume text-warning me-2"></i>Contact Us</h1>
+        <p class="text-muted mx-auto" style="max-width: 600px;">Have questions, special orders, or feedback? Get in touch with us and we'll reply as soon as possible.</p>
+        <div class="mx-auto bg-warning" style="width: 60px; height: 3px;"></div>
+    </div>
+
+    <div class="row g-5">
+        <!-- Contact Details Card -->
+        <div class="col-lg-5">
+            <div class="card card-bakery p-4 bg-white border border-warning-subtle shadow-sm h-100">
+                <h3 class="font-weight-bold text-dark mb-4"><i class="fa-solid fa-circle-info text-warning me-2"></i>Contact Details</h3>
+                
+                <ul class="list-unstyled d-flex flex-column gap-4">
+                    <li class="d-flex align-items-start">
+                        <div class="bg-warning-subtle text-warning p-3 rounded-circle me-3 border border-warning">
+                            <i class="fa-solid fa-location-dot fa-lg"></i>
+                        </div>
+                        <div>
+                            <strong class="text-dark d-block mb-1">Our Location</strong>
+                            <span class="text-muted">Iskcon Burla, Near Siphon, Burla, Sambalpur, Odisha, India</span>
+                        </div>
+                    </li>
+                    <li class="d-flex align-items-start">
+                        <div class="bg-warning-subtle text-warning p-3 rounded-circle me-3 border border-warning">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <div>
+                            <strong class="text-dark d-block mb-1">Phone / WhatsApp</strong>
+                            <span class="text-muted">+91 98765 43210</span>
+                        </div>
+                    </li>
+                    <li class="d-flex align-items-start">
+                        <div class="bg-warning-subtle text-warning p-3 rounded-circle me-3 border border-warning">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div>
+                            <strong class="text-dark d-block mb-1">Email Support</strong>
+                            <span class="text-muted">contact@sripadsbakery.com</span>
+                        </div>
+                    </li>
+                    <li class="d-flex align-items-start">
+                        <div class="bg-warning-subtle text-warning p-3 rounded-circle me-3 border border-warning">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div>
+                            <strong class="text-dark d-block mb-1">Hours of Operations</strong>
+                            <span class="text-muted d-block">Monday - Friday: 8:00 AM - 10:00 PM</span>
+                            <span class="text-muted d-block">Saturday - Sunday: 9:00 AM - 11:00 PM</span>
+                            <span class="text-muted">Online Order Delivery: 24/7 Service</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Contact Message Form -->
+        <div class="col-lg-7">
+            <div class="card card-bakery p-4 bg-white border border-warning-subtle shadow-sm h-100">
+                <h3 class="font-weight-bold text-dark mb-4"><i class="fa-solid fa-envelope-open-text text-warning me-2"></i>Send us a Message</h3>
+                
+                <form action="{% url 'contact_us' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="name" class="form-label font-weight-bold text-dark">Your Name</label>
+                            <input type="text" class="form-control rounded-pill px-3" id="name" name="name" placeholder="John Doe" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label font-weight-bold text-dark">Your Email</label>
+                            <input type="email" class="form-control rounded-pill px-3" id="email" name="email" placeholder="john@example.com" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="subject" class="form-label font-weight-bold text-dark">Subject</label>
+                            <input type="text" class="form-control rounded-pill px-3" id="subject" name="subject" placeholder="Custom Cake Inquiry, Delivery Info, etc." required>
+                        </div>
+                        <div class="col-12">
+                            <label for="message" class="form-label font-weight-bold text-dark">Message</label>
+                            <textarea class="form-control rounded-3 p-3" id="message" name="message" rows="5" placeholder="Write your message here..." required></textarea>
+                        </div>
+                        <div class="col-12 mt-4 text-end">
+                            <button type="submit" class="btn btn-bakery-primary btn-lg"><i class="fa-solid fa-paper-plane me-2"></i>Submit Message</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

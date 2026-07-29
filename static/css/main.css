@@ -3,29 +3,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-    --primary-color: #3E2723; /* Dark Brown */
-    --primary-light: #5D4037;
-    --primary-dark: #1B0000;
+    --primary-color: #F59E0B; /* Warm Orange */
+    --primary-light: #FBBF24;
+    --primary-dark: #D97706;
     
-    --secondary-color: #FFF8E1; /* Cream Background */
-    --secondary-light: #FFFDE7;
-    --secondary-dark: #FFECB3;
+    --secondary-color: #6F4E37; /* Chocolate Brown */
+    --secondary-light: #8B5A2B;
+    --secondary-dark: #5C3D2E;
     
-    --accent-color: #FF6F00; /* Rich Orange / Gold */
-    --accent-hover: #E65100;
+    --accent-color: #4CAF50; /* Fresh Green */
+    --accent-hover: #45a049;
     
-    --text-dark: #2D2D2D;
-    --text-light: #757575;
+    --text-dark: #3E2723; /* Dark Brown Text */
+    --text-light: #7E6B65;
     --text-white: #FFFFFF;
     
     --card-bg: #FFFFFF;
-    --body-bg: #FDFBF7;
-    --border-color: #E0DCD3;
+    --body-bg: #FFF8F0; /* Soft Cream Background */
+    --border-color: #E6D8C7;
     
     --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    --shadow-sm: 0 2px 4px rgba(62, 39, 35, 0.05);
-    --shadow-md: 0 8px 16px rgba(62, 39, 35, 0.08);
-    --shadow-lg: 0 16px 32px rgba(62, 39, 35, 0.12);
+    --shadow-sm: 0 2px 8px rgba(111, 78, 55, 0.04);
+    --shadow-md: 0 8px 24px rgba(111, 78, 55, 0.06);
+    --shadow-lg: 0 16px 40px rgba(111, 78, 55, 0.1);
 }
 
 /* Dark Mode Overrides */
@@ -71,19 +71,19 @@ body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, body.dark-mode h4, body
 }
 
 a {
-    color: var(--accent-color);
+    color: var(--primary-color);
     text-decoration: none;
     transition: var(--transition-smooth);
 }
 
 a:hover {
-    color: var(--accent-hover);
+    color: #E68900;
 }
 
-/* Navbar Custom Styling */
+/* Navbar Custom Styling (Chocolate Brown with White text) */
 .navbar-bakery {
-    background-color: var(--primary-color) !important;
-    border-bottom: 3px solid var(--accent-color);
+    background-color: var(--secondary-color) !important;
+    border-bottom: 3px solid var(--primary-color);
     padding: 12px 0;
     box-shadow: var(--shadow-md);
 }
@@ -91,16 +91,16 @@ a:hover {
 .navbar-brand-bakery {
     font-weight: 800;
     font-size: 1.5rem;
-    color: var(--secondary-color) !important;
+    color: var(--text-white) !important;
     letter-spacing: 1px;
 }
 
 .navbar-brand-bakery span {
-    color: var(--accent-color);
+    color: var(--primary-color);
 }
 
 .nav-link-bakery {
-    color: var(--secondary-color) !important;
+    color: var(--text-white) !important;
     font-weight: 500;
     margin: 0 8px;
     position: relative;
@@ -113,7 +113,7 @@ a:hover {
     height: 2px;
     bottom: -4px;
     left: 0;
-    background-color: var(--accent-color);
+    background-color: var(--primary-color);
     transition: var(--transition-smooth);
 }
 
@@ -122,26 +122,26 @@ a:hover {
 }
 
 .nav-link-bakery:hover {
-    color: var(--accent-color) !important;
+    color: var(--primary-color) !important;
 }
 
-/* Buttons */
+/* Buttons (Warm Orange #F59E0B with hover #E68900) */
 .btn-bakery-primary {
-    background-color: var(--accent-color);
+    background-color: var(--primary-color);
     color: var(--text-white);
     font-weight: 600;
     padding: 10px 24px;
     border-radius: 30px;
     border: none;
-    box-shadow: 0 4px 6px rgba(255, 111, 0, 0.2);
+    box-shadow: 0 4px 6px rgba(245, 158, 11, 0.2);
     transition: var(--transition-smooth);
 }
 
 .btn-bakery-primary:hover {
-    background-color: var(--accent-hover);
+    background-color: #E68900;
     color: var(--text-white);
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(255, 111, 0, 0.3);
+    box-shadow: 0 6px 12px rgba(245, 158, 11, 0.3);
 }
 
 .btn-bakery-secondary {
@@ -156,8 +156,30 @@ a:hover {
 
 .btn-bakery-secondary:hover {
     background-color: var(--primary-color);
-    color: var(--secondary-color);
+    color: var(--text-white);
     transform: translateY(-2px);
+}
+
+/* Bootstrap Button overrides for website consistency */
+.btn-warning {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: var(--text-white) !important;
+}
+.btn-warning:hover, .btn-warning:focus, .btn-warning:active {
+    background-color: #E68900 !important;
+    border-color: #E68900 !important;
+    color: var(--text-white) !important;
+}
+
+.btn-outline-warning {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+.btn-outline-warning:hover, .btn-outline-warning:focus, .btn-outline-warning:active {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: var(--text-white) !important;
 }
 
 /* Cards & Grid list */
@@ -217,27 +239,29 @@ a:hover {
     border-radius: 50%;
 }
 
-/* Hero Section */
+/* Hero Section (Soft Cream Background with Dark Brown text & orange buttons) */
 .hero-bakery {
-    background: linear-gradient(rgba(62, 39, 35, 0.8), rgba(62, 39, 35, 0.8)), url('/static/images/hero_banner.jpg') no-repeat center center/cover;
-    color: var(--text-white);
+    background: var(--body-bg) !important;
+    color: var(--text-dark) !important;
     padding: 120px 0;
     text-align: center;
-    border-bottom: 5px solid var(--accent-color);
+    border-bottom: 5px solid var(--primary-color);
+    border-top: 1px solid var(--border-color);
 }
 
 .hero-bakery h1 {
     font-size: 3.5rem;
     font-weight: 800;
-    color: var(--secondary-color);
+    color: var(--text-dark);
     margin-bottom: 20px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: none;
 }
 
 .hero-bakery p {
     font-size: 1.25rem;
     max-width: 700px;
     margin: 0 auto 30px auto;
+    color: var(--text-light);
 }
 
 /* Chat System */
@@ -335,17 +359,17 @@ body.dark-mode .message-bubble.me {
     background-color: #388E3C;
 }
 
-/* Footer - Day Mode (Default) */
+/* Footer - Day Mode (Default - Dark Brown #3E2723 background with White text) */
 .footer-bakery {
-    background-color: #FFFFFF !important;
-    color: #000000 !important;
+    background-color: #3E2723 !important;
+    color: #FFFFFF !important;
     padding: 60px 0 20px 0;
-    border-top: 5px solid #000000;
+    border-top: 5px solid var(--primary-color);
     font-size: 0.9rem;
 }
 .footer-title {
     font-weight: 700;
-    color: #000000 !important;
+    color: #FFFFFF !important;
     margin-bottom: 20px;
 }
 .footer-bakery p,
@@ -354,34 +378,34 @@ body.dark-mode .message-bubble.me {
 .footer-bakery span,
 .footer-bakery li,
 .footer-bakery ul {
-    color: #000000 !important;
+    color: rgba(255, 255, 255, 0.8) !important;
 }
 .footer-links a {
-    color: #000000 !important;
+    color: #FFFFFF !important;
     transition: var(--transition-smooth);
 }
 .footer-links a:hover {
-    color: #555555 !important;
+    color: var(--primary-color) !important;
     padding-left: 4px;
 }
 .footer-bakery hr {
-    border-color: rgba(0, 0, 0, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
     opacity: 1;
 }
 .footer-bakery .btn-outline-warning {
-    color: #000000 !important;
-    border-color: #000000 !important;
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
 }
 .footer-bakery .btn-outline-warning:hover {
-    background-color: #000000 !important;
-    color: #FFFFFF !important;
+    background-color: var(--primary-color) !important;
+    color: #3E2723 !important;
 }
 
 /* Footer - Night Mode Override */
 body.dark-mode .footer-bakery {
     background-color: #1B0000 !important;
     color: #FFFFFF !important;
-    border-top: 5px solid var(--accent-color);
+    border-top: 5px solid var(--primary-color);
 }
 body.dark-mode .footer-title {
     color: #FFFFFF !important;
@@ -398,18 +422,33 @@ body.dark-mode .footer-links a {
     color: #FFFFFF !important;
 }
 body.dark-mode .footer-links a:hover {
-    color: var(--accent-color) !important;
+    color: var(--primary-color) !important;
 }
 body.dark-mode .footer-bakery hr {
     border-color: rgba(255, 255, 255, 0.15) !important;
 }
 body.dark-mode .footer-bakery .btn-outline-warning {
-    color: var(--accent-color) !important;
-    border-color: var(--accent-color) !important;
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
 }
 body.dark-mode .footer-bakery .btn-outline-warning:hover {
-    background-color: var(--accent-color) !important;
+    background-color: var(--primary-color) !important;
     color: #1B0000 !important;
+}
+
+/* Custom Price Display Colors - Fresh Green (#4CAF50) */
+.card-bakery .text-danger,
+.card-bakery .text-dark,
+.col-md-6 .text-danger,
+.col-md-6 .text-dark,
+#displayPrice {
+    color: var(--accent-color) !important;
+}
+
+/* Keep crossed-out original prices muted gray */
+.card-bakery .text-decoration-line-through,
+.col-md-6 .text-decoration-line-through {
+    color: var(--text-light) !important;
 }
 
 /* Animations */

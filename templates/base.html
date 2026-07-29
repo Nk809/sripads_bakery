@@ -176,7 +176,7 @@
     <footer class="footer-bakery mt-5">
         <div class="container">
             <div class="row g-4">
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-3 col-md-6">
                     <h5 class="footer-title"><i class="fa-solid fa-cake-candles me-2"></i>Sripad's Bakery</h5>
                     <p>Pure Vegetarian & Sanctified Maha Prasadam. We deliver premium quality bakery items,
                         custom cakes, and snacks offered to the Lord and prepared with love and devotion.</p>
@@ -195,14 +195,24 @@
                         <li><a href="{% url 'home' %}">Home</a></li>
                         <li><a href="{% url 'product_list' %}">Browse Items</a></li>
                         <li><a href="{% url 'cart_detail' %}">Shopping Cart</a></li>
+                        <li><a href="{% url 'about_us' %}">About Us</a></li>
+                        <li><a href="{% url 'contact_us' %}">Contact Us</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5 class="footer-title">Hours of Operations</h5>
+                <div class="col-lg-2 col-md-6 footer-links">
+                    <h5 class="footer-title">Policies</h5>
                     <ul class="list-unstyled d-flex flex-column gap-2">
-                        <li>Monday - Friday: 8:00 AM - 10:00 PM</li>
-                        <li>Saturday - Sunday: 9:00 AM - 11:00 PM</li>
-                        <li>Online Delivery: 24/7 Service</li>
+                        <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+                        <li><a href="{% url 'terms_conditions' %}">Terms & Conditions</a></li>
+                        <li><a href="{% url 'refund_policy' %}">Refund Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="footer-title">Hours</h5>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li>Mon - Fri: 8 AM - 10 PM</li>
+                        <li>Sat - Sun: 9 AM - 11 PM</li>
+                        <li>Delivery: 24/7 Service</li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">

@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
@@ -559,4 +560,30 @@ def serve_db_media(request, path):
         if os.path.exists(local_path):
             return django_serve(request, clean_path, document_root=settings.MEDIA_ROOT)
         raise Http404("File not found")
+
+
+# Compliance & Legal Policies views for Payment Gateway onboarding
+def about_us(request):
+    return render(request, 'buyer/about.html')
+
+def contact_us(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        
+        messages.success(request, f"Thank you, {name}! Your message has been sent successfully. We will get back to you soon.")
+        return redirect('contact_us')
+        
+    return render(request, 'buyer/contact.html')
+
+def privacy_policy(request):
+    return render(request, 'buyer/privacy.html')
+
+def terms_conditions(request):
+    return render(request, 'buyer/terms.html')
+
+def refund_policy(request):
+    return render(request, 'buyer/refund.html')
 

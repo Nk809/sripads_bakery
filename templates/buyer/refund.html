@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Cancellation & Refund Policies - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card card-bakery p-5 bg-white border border-warning-subtle shadow-sm">
+                <h1 class="display-6 font-weight-bold text-dark mb-4 text-center">
+                    <i class="fa-solid fa-handshake-angle text-warning me-2"></i>Cancellation & Refund Policy
+                </h1>
+                <p class="text-muted text-center mb-5">Last Updated: July 29, 2026</p>
+                <div class="mx-auto bg-warning mb-5" style="width: 100px; height: 3px;"></div>
+
+                <div class="policy-content text-muted leading-relaxed">
+                    <h3 class="font-weight-bold text-dark h5 mt-4 mb-3">1. Order Cancellations</h3>
+                    <p>
+                        We understand that plans can change. You can cancel your order under the following conditions:
+                    </p>
+                    <ul>
+                        <li><strong>Standard Items:</strong> Orders for regular items (breads, cookies, non-customized cakes) can be cancelled within <strong>2 hours</strong> of order placement.</li>
+                        <li><strong>Customized / Special Orders:</strong> For customized cakes (with names, photos, or special designs), cancellations are only accepted if the order has not yet entered preparation. Once baking or decoration has begun, the order cannot be cancelled or refunded.</li>
+                        <li><strong>How to Cancel:</strong> To request a cancellation, please log in to your account, visit your order history and click "Cancel", or contact our support team immediately at +91 98765 43210.</li>
+                    </ul>
+
+                    <h3 class="font-weight-bold text-dark h5 mt-4 mb-3">2. Refund Eligibility</h3>
+                    <p>
+                        Refunds are issued under the following circumstances:
+                    </p>
+                    <ul>
+                        <li>The order is successfully cancelled within the permitted time windows described above.</li>
+                        <li>We are unable to fulfill or deliver your order due to supply issues, severe weather conditions, or unforeseen operational limitations.</li>
+                        <li>The delivered products have a verified structural defect or do not match the ordered specifications (photographic proof and instant reports to delivery personnel are required).</li>
+                    </ul>
+
+                    <h3 class="font-weight-bold text-dark h5 mt-4 mb-3">3. Non-Refundable Cases</h3>
+                    <p>
+                        Refunds will <strong>not</strong> be issued in the following cases:
+                    </p>
+                    <ul>
+                        <li>Incorrect or incomplete delivery address provided by the customer during checkout.</li>
+                        <li>The recipient is unavailable at the delivery address at the scheduled delivery time, or does not answer our delivery partner's phone calls.</li>
+                        <li>Cancellations requested after the preparation of customized cakes has commenced or after the order has been dispatched.</li>
+                    </ul>
+
+                    <h3 class="font-weight-bold text-dark h5 mt-4 mb-3">4. Refund Processing & Timelines</h3>
+                    <p>
+                        Once your refund request is approved, we will initiate the refund back to your original payment source:
+                    </p>
+                    <ul>
+                        <li><strong>Refund Method:</strong> Approved refunds will be credited back automatically to the original online payment method (Debit Card, Credit Card, Netbanking, UPI, or Wallet) used at the time of purchase.</li>
+                        <li><strong>Processing Timeline:</strong> We process approved refunds internally within <strong>24 to 48 hours</strong>. However, due to banking and payment gateway clearance protocols, it typically takes <strong>5 to 7 business days</strong> for the refunded amount to reflect in your bank account or card statement.</li>
+                    </ul>
+
+                    <h3 class="font-weight-bold text-dark h5 mt-4 mb-3">5. Contact Support for Refunds</h3>
+                    <p class="mb-0">
+                        If you need to discuss an order cancellation or require assistance with a pending refund, please contact us at <a href="mailto:billing@sripadsbakery.com">billing@sripadsbakery.com</a> or call our helpline at +91 98765 43210.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

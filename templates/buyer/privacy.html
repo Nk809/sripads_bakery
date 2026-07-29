@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Privacy Policy - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card card-bakery p-5 bg-white border border-warning-subtle shadow-sm">
+                <h1 class="display-6 font-weight-bold text-dark mb-4 text-center">
+                    <i class="fa-solid fa-shield-halved text-warning me-2"></i>Privacy Policy
+                </h1>
+                <p class="text-muted text-center mb-5">Last Updated: July 29, 2026</p>
+                <div class="mx-auto bg-warning mb-5" style="width: 100px; height: 3px;"></div>
+
+                <div class="policy-content text-muted leading-relaxed">
+                    <h3 class="font-weight-bold text-dark h5 mt-4 mb-3">1. Introduction</h3>
+                    <p>
+                        Welcome to Sripad's Bakery ("we", "our", "us"). We respect your privacy and are committed to protecting your personal data. This privacy policy explains how we collect, use, disclose, and protect your information when you visit our website and purchase our bakery items.
+                    </p>
+
+                    <h3 class="font-weight-bold text-dark h5 mt-4 mb-3">2. Information We Collect</h3>
+                    <p>
+                        We collect personal information that you voluntarily provide to us when you register on our website, place an order, or contact us. This information includes:
+                    </p>
+                    <ul>
+                        <li><strong>Personal Identification:</strong> Name, email address, phone number, and physical billing/shipping address.</li>
+                        <li><strong>Order details:</strong> Details of the cakes, pastries, and bakery products you have ordered.</li>
+                        <li><strong>Transaction Data:</strong> Payment details (e.g., payment status, transaction ID). Please note that payment details are processed directly by our payment gateway providers (such as PayU, Razorpay, etc.), and we do not store full card numbers or banking passwords on our servers.</li>
+                    </ul>
+
+                    <h3 class="font-weight-bold text-dark h5 mt-4 mb-3">3. How We Use Your Information</h3>
+                    <p>
+                        We use the information we collect to:
+                    </p>
+                    <ul>
+                        <li>Process, prepare, and deliver your orders (including calculating shipping rates, handling custom cake requirements).</li>
+                        <li>Send order confirmations, delivery updates, and notification alerts.</li>
+                        <li>Process secure payments via our authorized payment gateway partners.</li>
+                        <li>Respond to your feedback, questions, or support queries.</li>
+                        <li>Improve our services, product offerings, and user experience.</li>
+                    </ul>
+
+                    <h3 class="font-weight-bold text-dark h5 mt-4 mb-3">4. Security of Your Information</h3>
+                    <p>
+                        We implement appropriate technical and organizational security measures to protect your personal data against unauthorized access, loss, or misuse. All communications and transactional pages on our website are encrypted using Secure Socket Layer (SSL/HTTPS) technology.
+                    </p>
+
+                    <h3 class="font-weight-bold text-dark h5 mt-4 mb-3">5. Third-Party Service Providers</h3>
+                    <p>
+                        We may share your data with trusted third parties to facilitate our services:
+                    </p>
+                    <ul>
+                        <li><strong>Payment Gateways:</strong> To authorize and process payments securely. Our partners comply with Payment Card Industry Data Security Standards (PCI-DSS).</li>
+                        <li><strong>Delivery partners:</strong> To ensure accurate and timely delivery of our bakery products to your door.</li>
+                    </ul>
+
+                    <h3 class="font-weight-bold text-dark h5 mt-4 mb-3">6. Cookies</h3>
+                    <p>
+                        Our website uses cookies to improve navigation, save items in your shopping cart, and personalize your experience. You can choose to disable cookies in your browser settings, though some features of the website may not function correctly as a result.
+                    </p>
+
+                    <h3 class="font-weight-bold text-dark h5 mt-4 mb-3">7. Changes to This Policy</h3>
+                    <p>
+                        We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated "Last Updated" date. We encourage you to review this policy periodically.
+                    </p>
+
+                    <h3 class="font-weight-bold text-dark h5 mt-4 mb-3">8. Contact Us</h3>
+                    <p class="mb-0">
+                        If you have any questions or concerns regarding this Privacy Policy, please contact us at <a href="mailto:privacy@sripadsbakery.com">privacy@sripadsbakery.com</a> or visit our <a href="{% url 'contact_us' %}">Contact Us</a> page.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

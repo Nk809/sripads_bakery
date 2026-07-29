@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}About Us - Sripad's Bakery{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate-fade-in-up">
+    <!-- Header Hero Banner -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="p-5 text-center bg-warning-subtle rounded-4 shadow-sm border border-warning">
+                <h1 class="display-5 font-weight-bold text-dark mb-3"><i class="fa-solid fa-cake-candles me-2 text-warning"></i>Our Story & Devotion</h1>
+                <p class="lead text-muted mx-auto" style="max-width: 700px;">
+                    Sripad's Bakery is dedicated to preparing pure vegetarian, sanctified offerings. Every treat we bake is prepared with love, cleanliness, and offered to the Lord before reaching you.
+                </p>
+                <div class="mx-auto bg-warning mt-4" style="width: 80px; height: 4px; border-radius: 2px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Philosophy and Values -->
+    <div class="row g-5 align-items-center mb-5">
+        <div class="col-md-6">
+            <h2 class="font-weight-bold text-dark mb-4"><i class="fa-solid fa-seedling text-success me-2"></i>Pure Vegetarian & Sanctified</h2>
+            <p class="text-muted leading-relaxed">
+                At Sripad's Bakery, we believe that food is not just nourishment for the body but also for the consciousness. That is why we are committed to keeping our bakery <strong>100% vegetarian (Eggless)</strong>. We strictly exclude meat, fish, eggs, gelatin, and other non-vegetarian additives from our kitchen.
+            </p>
+            <p class="text-muted leading-relaxed">
+                More than just vegetarian, our offerings are prepared as <em>Maha Prasadam</em>. Every ingredient is selected for its purity, combined according to standard culinary guidelines, and offered with prayers of gratitude. This infuses our cakes, cookies, and breads with a unique taste and spiritual purity.
+            </p>
+            <div class="mt-4">
+                <div class="d-flex align-items-center mb-2">
+                    <i class="fa-solid fa-circle-check text-success me-2"></i>
+                    <span class="font-weight-bold text-dark">Strictly 100% Eggless & Pure Vegetarian</span>
+                </div>
+                <div class="d-flex align-items-center mb-2">
+                    <i class="fa-solid fa-circle-check text-success me-2"></i>
+                    <span class="font-weight-bold text-dark">Sanctified Ingredients & Pristine Kitchen Hygiene</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <i class="fa-solid fa-circle-check text-success me-2"></i>
+                    <span class="font-weight-bold text-dark">Prepared with Love and Devotion</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card card-bakery border-0 shadow-md p-4 bg-white">
+                <h3 class="font-weight-bold text-dark mb-3 text-center"><i class="fa-solid fa-heart text-danger me-2"></i>Our Pillars of Quality</h3>
+                <div class="row g-3 mt-2">
+                    <div class="col-6 text-center">
+                        <div class="p-3 bg-light rounded-3 border border-warning-subtle">
+                            <i class="fa-solid fa-wheat-awn fa-2x text-warning mb-2"></i>
+                            <h6 class="font-weight-bold text-dark mb-0">Premium Flour</h6>
+                        </div>
+                    </div>
+                    <div class="col-6 text-center">
+                        <div class="p-3 bg-light rounded-3 border border-warning-subtle">
+                            <i class="fa-solid fa-soap fa-2x text-warning mb-2"></i>
+                            <h6 class="font-weight-bold text-dark mb-0">Extreme Hygiene</h6>
+                        </div>
+                    </div>
+                    <div class="col-6 text-center">
+                        <div class="p-3 bg-light rounded-3 border border-warning-subtle">
+                            <i class="fa-solid fa-truck-fast fa-2x text-warning mb-2"></i>
+                            <h6 class="font-weight-bold text-dark mb-0">On-Time Delivery</h6>
+                        </div>
+                    </div>
+                    <div class="col-6 text-center">
+                        <div class="p-3 bg-light rounded-3 border border-warning-subtle">
+                            <i class="fa-solid fa-circle-dollar-to-slot fa-2x text-warning mb-2"></i>
+                            <h6 class="font-weight-bold text-dark mb-0">Devoted Service</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Our Location / Outpost -->
+    <div class="row bg-light rounded-4 border border-warning-subtle p-5 align-items-center g-4">
+        <div class="col-md-8">
+            <h3 class="font-weight-bold text-dark"><i class="fa-solid fa-map-location-dot me-2 text-warning"></i>Visit Us in Burla</h3>
+            <p class="text-muted mb-0">
+                Our kitchen and outlet are situated near the holy surroundings of Iskcon Burla, Near Siphon, Burla, Sambalpur, Odisha, India. Feel free to visit us, take in the aroma of freshly baked breads, and order custom cakes for your celebrations.
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end text-center">
+            <a href="{% url 'contact_us' %}" class="btn btn-bakery-primary btn-lg px-4"><i class="fa-solid fa-envelope me-2"></i>Get in Touch</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

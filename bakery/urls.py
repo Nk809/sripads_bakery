@@ -12,6 +12,13 @@ urlpatterns = [
     path('cart/apply-coupon/', views.apply_coupon, name='apply_coupon'),
     path('cart/remove-coupon/', views.remove_coupon, name='remove_coupon'),
     
+    # Compliance & Legal Policies routes (for Payment Gateway onboarding)
+    path('about-us/', views.about_us, name='about_us'),
+    path('contact-us/', views.contact_us, name='contact_us'),
+    path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
+    path('terms-conditions/', views.terms_conditions, name='terms_conditions'),
+    path('cancellation-refund/', views.refund_policy, name='refund_policy'),
+    
     # Seller panel routes
     path('seller/dashboard/', views.seller_dashboard, name='seller_dashboard'),
     path('seller/products/', views.seller_product_list, name='seller_product_list'),
