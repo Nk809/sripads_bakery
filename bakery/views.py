@@ -83,7 +83,7 @@ def cart_detail(request):
     
     # GST and Delivery Charges calculations
     gst = total * 0.05 / 1.05 # 5% GST inclusive for bakery products
-    delivery_charges = delivery_rate if total < threshold and total > 0 else 0.0
+    delivery_charges = 0.0
     grand_total = total + delivery_charges
     
     # Calculate Advance and Remaining amounts (40% advance)
@@ -117,7 +117,7 @@ def cart_detail(request):
                 discount = total * (coupon.discount_percentage / 100.0)
             total_after_discount = total - discount
             gst = total_after_discount * 0.05 / 1.05
-            delivery_charges = delivery_rate if total_after_discount < threshold and total_after_discount > 0 else 0.0
+            delivery_charges = 0.0
             grand_total = total_after_discount + delivery_charges
             advance_amount = grand_total * 0.40
             remaining_amount = grand_total * 0.60

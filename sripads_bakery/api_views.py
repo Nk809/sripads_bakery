@@ -253,9 +253,23 @@ class OrderListCreateAPIView(APIView):
         )
         
         for item in cart_items:
+            product_price = float(item.product.current_price)
+            weight_str = item.selected_weight.lower()
+            multiplier = 1.0
+            if '0.5' in weight_str or 'half' in weight_str:
+                multiplier = 0.5
+            elif '2' in weight_str:
+                multiplier = 2.0
+            elif '3' in weight_str:
+                multiplier = 3.0
+            elif '5' in weight_str:
+                multiplier = 5.0
+            
+            unit_price = product_price * multiplier
+
             OrderItem.objects.create(
                 order=order, product=item.product, quantity=item.quantity,
-                selected_weight=item.selected_weight, price=item.product.current_price
+                selected_weight=item.selected_weight, price=unit_price
             )
             # Stock update
             if item.product.stock_quantity >= item.quantity:
