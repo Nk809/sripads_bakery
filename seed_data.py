@@ -154,7 +154,7 @@ def seed():
 
     # 5. Seeding User Accounts (preserves updated user credentials)
     if not CustomUser.objects.filter(username='admin').exists():
-        CustomUser.objects.create_superuser('admin', 'nkbiswal301@gmail.com', 'adminpassword', role='seller', phone='+91 9876543210')
+        CustomUser.objects.create_superuser('admin', 'nkbiswal301@gmail.com', 'adminpassword', role='seller', phone='+91 7735629317')
     if not CustomUser.objects.filter(username='customer').exists():
         CustomUser.objects.create_user('customer', 'customer@gmail.com', 'customerpassword', role='buyer', phone='+91 9123456780')
 
